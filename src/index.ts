@@ -1,12 +1,38 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
+import { PrismaClient } from "@prisma/client";
 
-const app: Express = express();
-const port = process.env.PORT || 3001;
+const prisma = new PrismaClient();
+const app = express();
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
+app.use(express.json());
+
+// Create a new user
+app.post("/users", async (req, res) => {
+  const { name, email } = req.body;
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+      },
+    });
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: "Unable to create user" });
+  }
 });
 
-app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+// Get all users
+app.get("/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Unable to fetch users" });
+  }
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
