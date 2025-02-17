@@ -1,10 +1,27 @@
-import { Button } from "./components/ui/button";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {
+  Home,
+  ProductDetails,
+  Products,
+  Settings,
+  ProfileDetails,
+  Login,
+  Register,
+} from "./Pages";
 
 const App = () => {
   return (
-    <h1 className="text-3xl font-bold underline">
-      <Button>Hello!</Button>
-    </h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile/:id" element={<ProfileDetails />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/products/:id" element={<ProductDetails />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
