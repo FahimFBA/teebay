@@ -112,21 +112,150 @@ app.get("/test-db-connection", async (req, res) => {
   }
 });
 
-// Products API || Table Name - Products
-// columns -> id, owner_id, name, price, rent, rented_to, updated_at, created_at 
+// Products API
+
+// Input validation function for products
+const validateProductInput = (
+  name: string,
+  category: string,
+  price: number,
+  rent?: number
+): string | null => {
+  if (!name || name.trim() === "") {
+    return "Product name is required";
+  }
+  if (!category || category.trim() === "") {
+    return "Product category is required";
+  }
+  if (typeof price !== "number" || price <= 0) {
+    return "Price must be a positive number";
+  }
+  if (rent !== undefined && (typeof rent !== "number" || rent < 0)) {
+    return "Rent must be a non-negative number";
+  }
+  return null;
+};
 
 // This endpoint will get all products
-app.get("/products", async (req, res) => {});
+app.get("/products", async (req, res) => {
+  try {
+    const products = await prisma.product.findMany({
+      include: { owner: { select: { id: true, name: true, email: true } } },
+    });
+    res.status(200).json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    res.status(500).json({ error: "Unable to fetch products" });
+  }
+});
+
 // This endpoint will get one product
-app.get("/product", async (req, res) => {});
+app.get("/product/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const product = await prisma.product.findUnique({
+      where: { id: parseInt(id) },
+      include: { owner: { select: { id: true, name: true, email: true } } },
+    });
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error fetching product:", error);
+    res.status(500).json({ error: "Unable to fetch product" });
+  }
+});
+
 // This endpoint will create 1 product
-app.post("/create-product", async (req, res) => {});
+app.post("/create-product", async (req, res) => {
+  const { ownerId, name, category, price, rent } = req.body;
+  const validationError = validateProductInput(name, category, price, rent);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+  try {
+    const product = await prisma.product.create({
+      data: {
+        ownerId: parseInt(ownerId),
+        name,
+        category,
+        price,
+        rent,
+      },
+    });
+    res.status(201).json(product);
+  } catch (error) {
+    console.error("Error creating product:", error);
+    res.status(500).json({ error: "Unable to create product" });
+  }
+});
+
 // This endpoint will update 1 product
-app.patch("/update-product", async (req, res) => {});
+app.patch("/update-product/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, category, price, rent } = req.body;
+  const validationError = validateProductInput(name, category, price, rent);
+  if (validationError) {
+    return res.status(400).json({ error: validationError });
+  }
+  try {
+    const product = await prisma.product.update({
+      where: { id: parseInt(id) },
+      data: { name, category, price, rent },
+    });
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error updating product:", error);
+    res.status(500).json({ error: "Unable to update product" });
+  }
+});
+
 // This endpoint will delete 1 product
-app.delete("/delete-product", async (req, res) => {});
+app.delete("/delete-product/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.product.delete({
+      where: { id: parseInt(id) },
+    });
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    res.status(500).json({ error: "Unable to delete product" });
+  }
+});
 
+// Purchase a product
+app.post("/purchase-product/:id", async (req, res) => {
+  const { id } = req.params;
+  const { buyerId } = req.body;
+  try {
+    const product = await prisma.product.update({
+      where: { id: parseInt(id) },
+      data: { ownerId: parseInt(buyerId) },
+    });
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error purchasing product:", error);
+    res.status(500).json({ error: "Unable to purchase product" });
+  }
+});
 
+// Rent a product
+app.post("/rent-product/:id", async (req, res) => {
+  const { id } = req.params;
+  const { renterId } = req.body;
+  try {
+    const product = await prisma.product.update({
+      where: { id: parseInt(id) },
+      data: { rentedTo: parseInt(renterId) },
+    });
+    res.status(200).json(product);
+  } catch (error) {
+    console.error("Error renting product:", error);
+    res.status(500).json({ error: "Unable to rent product" });
+  }
+});
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
