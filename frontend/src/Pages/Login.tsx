@@ -9,16 +9,59 @@ import {
   Label,
   Input,
 } from "@/components/ui";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LoginDataType } from "@/Types";
 import { initialLoginDataState } from "@/store";
+import { gql, useMutation } from "@apollo/client";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($email: String!, $password: String!) {
+    login(email: $email, password: $password) {
+      token
+      user {
+        id
+        email
+        name
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;
 
 export const Login = () => {
   const [data, setData] = useState<LoginDataType>(initialLoginDataState);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
-  const onSubmit = (e: React.FormEvent) => {
+  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted: (data) => {
+      // Here you would typically store the token in localStorage or a secure storage
+      localStorage.setItem("token", data.login.token);
+      // Redirect to home page or dashboard
+      navigate("/");
+    },
+    onError: (error) => {
+      setError(error.message);
+    },
+  });
+
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    try {
+      const result = await login({
+        variables: {
+          email: data.email,
+          password: data.password,
+        },
+      });
+      console.log("Login result:", result);
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("An error occurred during login. Please try again.");
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -31,9 +74,9 @@ export const Login = () => {
     <div className="h-screen flex justify-center items-center">
       <Card className="w-[300px]">
         <CardHeader>
-          <CardTitle>Create project</CardTitle>
+          <CardTitle>Login</CardTitle>
           <CardDescription>
-            Deploy your new project in one-click.
+            Enter your credentials to access your account.
           </CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
@@ -47,7 +90,7 @@ export const Login = () => {
                   type="email"
                   name="email"
                   required
-                  value={data?.email}
+                  value={data.email}
                   onChange={handleChange}
                 />
               </div>
@@ -59,15 +102,16 @@ export const Login = () => {
                   type="password"
                   name="password"
                   required
-                  value={data?.password}
+                  value={data.password}
                   onChange={handleChange}
                 />
               </div>
             </div>
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </Button>
             <div className="text-xs flex">
               <p>Don't have an account? </p>
