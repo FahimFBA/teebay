@@ -15,6 +15,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
+  Input,
 } from "@/components/ui";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
@@ -28,6 +29,7 @@ import { filterTypes } from "@/constants";
 // profile - details,
 // list products on profile - edit, delete, create product(owner),
 // buy, rent,
+// debounce
 
 export const Products = () => {
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
@@ -37,8 +39,8 @@ export const Products = () => {
     variables: {
       ...filters,
       filters: {
-        ...filters.condition
-      }
+        ...filters.condition,
+      },
     },
   });
 
@@ -53,65 +55,100 @@ export const Products = () => {
     <div className="container max-w-7xl mx-auto my-3">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
 
-      <Popover>
-        <PopoverTrigger asChild>
-          <Button
-            variant="outline"
-            role="combobox"
-            className="w-[200px] justify-between mb-4"
-          >
-            {filters.condition.category
-              ? filterTypes.find(
-                  (item) => item.value === filters.condition.category
-                )?.label
-              : "Select Category..."}
-            <ChevronsUpDown className="opacity-50" />
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-[200px] p-0">
-          {/* @ts-expect-error ...... */}
-          <Command>
+      <div className="flex flex-row gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              className="w-[200px] justify-between mb-4"
+            >
+              {filters.condition.category
+                ? filterTypes.find(
+                    (item) => item.value === filters.condition.category
+                  )?.label
+                : "Select Category..."}
+              <ChevronsUpDown className="opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[200px] p-0">
             {/* @ts-expect-error ...... */}
-            <CommandInput placeholder="Search for category" />
-            {/* @ts-expect-error ...... */}
-            <CommandList>
+            <Command>
               {/* @ts-expect-error ...... */}
-              <CommandEmpty>No framework found.</CommandEmpty>
+              <CommandInput placeholder="Search for category" />
               {/* @ts-expect-error ...... */}
-              <CommandGroup>
-                {filterTypes.map((item) => (
-                  <CommandItem
-                    key={item.value}
-                    value={item.value}
-                    onSelect={(currentValue: string) => {
-                      setFilters({
-                        ...filters,
-                        condition: {
-                          ...filters.condition,
-                          category:
-                            currentValue === filters.condition.category
-                              ? ""
-                              : currentValue,
-                        },
-                      });
-                    }}
-                  >
-                    {item.label}
-                    <Check
-                      className={cn(
-                        "ml-auto",
-                        filters.condition.category === item.value
-                          ? "opacity-100"
-                          : "opacity-0"
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </PopoverContent>
-      </Popover>
+              <CommandList>
+                {/* @ts-expect-error ...... */}
+                <CommandEmpty>No framework found.</CommandEmpty>
+                {/* @ts-expect-error ...... */}
+                <CommandGroup>
+                  {filterTypes.map((item) => (
+                    <CommandItem
+                      key={item.value}
+                      value={item.value}
+                      onSelect={(currentValue: string) => {
+                        setFilters({
+                          ...filters,
+                          condition: {
+                            ...filters.condition,
+                            category:
+                              currentValue === filters.condition.category
+                                ? ""
+                                : currentValue,
+                          },
+                        });
+                      }}
+                    >
+                      {item.label}
+                      <Check
+                        className={cn(
+                          "ml-auto",
+                          filters.condition.category === item.value
+                            ? "opacity-100"
+                            : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+
+        <Input
+          type="number"
+          name="minPrice"
+          value={filters.condition.minPrice}
+          placeholder="min price"
+          className="w-[150px]"
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              condition: {
+                ...filters.condition,
+                minPrice: Number(e.target.value) || 0,
+              },
+            })
+          }
+        />
+        <Input
+          type="number"
+          name="maxPrice"
+          value={filters.condition.maxPrice}
+          placeholder="max price"
+          className="w-[150px]"
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              condition: {
+                ...filters.condition,
+                maxPrice: Number(e.target.value) || 0,
+              },
+            })
+          }
+        />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
