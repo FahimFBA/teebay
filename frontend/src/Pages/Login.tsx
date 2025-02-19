@@ -12,30 +12,15 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LoginDataType } from "@/Types";
-import { initialLoginDataState } from "@/store";
-import { gql, useMutation } from "@apollo/client";
-
-const LOGIN_MUTATION = gql`
-  mutation Login($email: String!, $password: String!) {
-    login(email: $email, password: $password) {
-      token
-      user {
-        id
-        email
-        name
-        createdAt
-        updatedAt
-      }
-    }
-  }
-`;
+import { initialLoginDataState, LOGIN_MUTATION_QUERY } from "@/store";
+import { useMutation } from "@apollo/client";
 
 export const Login = () => {
   const [data, setData] = useState<LoginDataType>(initialLoginDataState);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION, {
+  const [login, { loading }] = useMutation(LOGIN_MUTATION_QUERY, {
     onCompleted: (data) => {
       // Here you would typically store the token in localStorage or a secure storage
       localStorage.setItem("token", data.login.token);

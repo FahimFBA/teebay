@@ -2,7 +2,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
   Command,
@@ -25,6 +24,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { initialFiltersState, GET_PRODUCTS_QUERY } from "@/store";
 import { IFilterState, ProductsData } from "@/Types";
 import { filterTypes } from "@/constants";
+import { useNavigate } from "react-router-dom";
 
 // profile - details,
 // list products on profile - edit, delete, create product(owner),
@@ -32,6 +32,8 @@ import { filterTypes } from "@/constants";
 // debounce
 
 export const Products = () => {
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
   console.log("filters", filters);
 
@@ -152,17 +154,19 @@ export const Products = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <Card key={product.id} className="">
+          <Card
+            key={product.id}
+            onClick={() => navigate("/products/" + product.id)}
+            className="cursor-pointer hover:shadow-lg"
+          >
             <CardHeader>
               <CardTitle>{product.name}</CardTitle>
               <CardDescription>{product.category}</CardDescription>
             </CardHeader>
             <CardContent>
               <p>Price: ${product.price}</p>
+              <p>Rent: ${product.rent}</p>
             </CardContent>
-            <CardFooter>
-              <Button>View Details</Button>
-            </CardFooter>
           </Card>
         ))}
       </div>

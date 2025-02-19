@@ -11,26 +11,16 @@ import {
 } from "@/components/ui";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { initialRegisterDataState } from "@/store";
+import { initialRegisterDataState, REGISTER_USER_QUERY } from "@/store";
 import { IAuthData } from "@/Types";
-import { gql, useMutation } from "@apollo/client";
-
-const REGISTER_USER = gql`
-  mutation RegisterUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      id
-      email
-      name
-    }
-  }
-`;
+import { useMutation } from "@apollo/client";
 
 export const Register = () => {
   const [data, setData] = useState<IAuthData>(initialRegisterDataState);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const [registerUser, { loading }] = useMutation(REGISTER_USER, {
+  const [registerUser, { loading }] = useMutation(REGISTER_USER_QUERY, {
     onCompleted: () => {
       navigate("/login");
     },
