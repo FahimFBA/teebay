@@ -5,54 +5,40 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
   Button,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui";
-import { gql, useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { useState } from "react";
 
-const GET_PRODUCTS = gql`
-  query GetProducts($page: Int!, $pageSize: Int!, $filters: ProductFilters) {
-    products(page: $page, pageSize: $pageSize, filters: $filters) {
-      products {
-        id
-        name
-        category
-        price
-      }
-      totalCount
-      hasNextPage
-    }
-  }
-`;
+import { cn } from "@/lib/utils";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { initialFiltersState, GET_PRODUCTS_QUERY } from "@/store";
+import { IFilterState, ProductsData } from "@/Types";
+import { filterTypes } from "@/constants";
 
-interface Product {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-}
-
-interface ProductsData {
-  products: {
-    products: Product[];
-    totalCount: number;
-    hasNextPage: boolean;
-  };
-}
+// profile - details,
+// list products on profile - edit, delete, create product(owner),
+// buy, rent,
 
 export const Products = () => {
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
+  const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
+  console.log("filters", filters);
 
-  const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS, {
+  const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
     variables: {
-      page,
-      pageSize,
+      ...filters,
       filters: {
-        category: "Electronics",
-        minPrice: 100,
-        maxPrice: 1000,
-      },
+        ...filters.condition
+      }
     },
   });
 
@@ -66,6 +52,67 @@ export const Products = () => {
   return (
     <div className="container max-w-7xl mx-auto my-3">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
+
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            className="w-[200px] justify-between mb-4"
+          >
+            {filters.condition.category
+              ? filterTypes.find(
+                  (item) => item.value === filters.condition.category
+                )?.label
+              : "Select Category..."}
+            <ChevronsUpDown className="opacity-50" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[200px] p-0">
+          {/* @ts-expect-error ...... */}
+          <Command>
+            {/* @ts-expect-error ...... */}
+            <CommandInput placeholder="Search for category" />
+            {/* @ts-expect-error ...... */}
+            <CommandList>
+              {/* @ts-expect-error ...... */}
+              <CommandEmpty>No framework found.</CommandEmpty>
+              {/* @ts-expect-error ...... */}
+              <CommandGroup>
+                {filterTypes.map((item) => (
+                  <CommandItem
+                    key={item.value}
+                    value={item.value}
+                    onSelect={(currentValue: string) => {
+                      setFilters({
+                        ...filters,
+                        condition: {
+                          ...filters.condition,
+                          category:
+                            currentValue === filters.condition.category
+                              ? ""
+                              : currentValue,
+                        },
+                      });
+                    }}
+                  >
+                    {item.label}
+                    <Check
+                      className={cn(
+                        "ml-auto",
+                        filters.condition.category === item.value
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
           <Card key={product.id} className="">
@@ -82,15 +129,34 @@ export const Products = () => {
           </Card>
         ))}
       </div>
-      <div className="mt-4 flex justify-between items-center">
+      <div className="my-4 flex justify-between items-center">
         <p>
-          Showing {(page - 1) * pageSize + 1} - {Math.min(page * pageSize, totalCount)} of {totalCount} products
+          Showing {(filters.page - 1) * filters.pageSize + 1} -{" "}
+          {Math.min(filters.page * filters.pageSize, totalCount)} of{" "}
+          {totalCount} products
         </p>
         <div>
-          <Button onClick={() => setPage(page - 1)} disabled={page === 1} className="mr-2">
+          <Button
+            onClick={() =>
+              setFilters({
+                ...filters,
+                page: filters.page - 1,
+              })
+            }
+            disabled={filters.page === 1}
+            className="mr-2"
+          >
             Previous
           </Button>
-          <Button onClick={() => setPage(page + 1)} disabled={!hasNextPage}>
+          <Button
+            onClick={() =>
+              setFilters({
+                ...filters,
+                page: filters.page + 1,
+              })
+            }
+            disabled={!hasNextPage}
+          >
             Next
           </Button>
         </div>
