@@ -27,15 +27,15 @@ import { filterTypes } from "@/constants";
 import { useNavigate } from "react-router-dom";
 
 // profile - details,
+// Authentication
+// ✅ product details page
 // list products on profile - edit, delete, create product(owner),
-// buy, rent,
+// buy, rent - button,
 // debounce
 
 export const Products = () => {
   const navigate = useNavigate();
-
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
-  console.log("filters", filters);
 
   const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
     variables: {

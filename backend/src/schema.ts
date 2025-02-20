@@ -11,6 +11,12 @@ export const typeDefs: DocumentNode = gql`
     products: [Product!]!
   }
 
+  input UpdateUserInput {
+    email: String
+    name: String
+    password: String
+  }
+
   type Product {
     id: Int!
     owner: User!
@@ -62,20 +68,22 @@ export const typeDefs: DocumentNode = gql`
     maxPrice: Float
   }
 
-  type Query {
-    users(page: Int, pageSize: Int): PaginatedUsers!
-    user(id: Int!): User
-    products(
-      page: Int
-      pageSize: Int
-      filters: ProductFilters
-    ): PaginatedProducts!
-    product(id: Int!): Product
+type Query {
+  users(page: Int, pageSize: Int): PaginatedUsers!
+  user(id: Int!): User
+  products(
+    page: Int
+    pageSize: Int
+    filters: ProductFilters
+  ): PaginatedProducts!
+  product(id: Int!): Product
+  rentedProducts(rentedTo: Int!): [Product!]!
   }
 
   type Mutation {
     login(email: String!, password: String!): AuthPayload!
     createUser(input: CreateUserInput!): User!
+    updateUser(id: Int!, input: UpdateUserInput!): User!
     createProduct(input: CreateProductInput!): Product!
     updateProduct(id: Int!, input: UpdateProductInput!): Product!
     deleteProduct(id: Int!): Product!
