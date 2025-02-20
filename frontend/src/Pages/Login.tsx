@@ -10,7 +10,7 @@ import {
   Input,
 } from "@/components/ui";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LoginDataType } from "@/Types";
 import { initialLoginDataState, LOGIN_MUTATION_QUERY } from "@/store";
 import { useMutation } from "@apollo/client";
@@ -20,7 +20,13 @@ export const Login = () => {
   const [data, setData] = useState<LoginDataType>(initialLoginDataState);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login: authLogin } = useAuth();
+  const { login: authLogin, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/');
+    }
+  }, [isAuthenticated, navigate]);
 
   const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION_QUERY, {
     onCompleted: (data) => {

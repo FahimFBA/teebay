@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React from 'react';
+import { makeVar, useReactiveVar, ApolloClient, InMemoryCache, gql, createHttpLink, from, ApolloProvider } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 interface User {
   id: number;
@@ -8,53 +10,69 @@ interface User {
   updatedAt: string;
 }
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  user: User | null;
-  login: (token: string, user: User) => void;
-  logout: () => void;
-}
+export const isAuthenticatedVar = makeVar<boolean>(!!localStorage.getItem('token'));
+export const userVar = makeVar<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
 
-const AuthContext = createContext<AuthContextType | null>(null);
+const httpLink = createHttpLink({
+  uri: 'http://localhost:4000/graphql', // Replace with your GraphQL endpoint
+});
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    if (token && storedUser) {
-      setIsAuthenticated(true);
-      setUser(JSON.parse(storedUser));
+const authLink = setContext((_, { headers }) => {
+  const token = localStorage.getItem('token');
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : "",
     }
-  }, []);
+  }
+});
 
-  const login = (token: string, user: User) => {
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-    setIsAuthenticated(true);
-    setUser(user);
-  };
+const cache = new InMemoryCache();
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setIsAuthenticated(false);
-    setUser(null);
-  };
+export const client = new ApolloClient({
+  link: from([authLink, httpLink]),
+  cache,
+});
 
-  return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+export const login = (token: string, user: User) => {
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
+  isAuthenticatedVar(true);
+  userVar(user);
+  client.writeQuery({
+    query: gql`
+      query GetUser {
+        user {
+          id
+          email
+          name
+          createdAt
+          updatedAt
+        }
+      }
+    `,
+    data: { user },
+  });
+};
+
+export const logout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  isAuthenticatedVar(false);
+  userVar(null);
+  client.resetStore();
 };
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  const isAuthenticated = useReactiveVar(isAuthenticatedVar);
+  const user = useReactiveVar(userVar);
+  return { isAuthenticated, user, login, logout };
+};
+
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <ApolloProvider client={client}>
+      {children}
+    </ApolloProvider>
+  );
 };
