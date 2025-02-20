@@ -5,3 +5,4 @@ export * from "./label";
 export * from "./command";
 export * from "./dialog";
 export * from "./popover";
+export * from "./tabs"

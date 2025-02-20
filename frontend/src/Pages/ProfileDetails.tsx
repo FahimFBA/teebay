@@ -3,6 +3,7 @@ import { useQuery } from "@apollo/client";
 import { GET_USER_PRODUCTS_QUERY, GET_RENTED_PRODUCTS_QUERY } from "@/store";
 import { Product } from "@/Types";
 import { ProductCard } from "@/components/Cards";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 
 export const ProfileDetails = () => {
   const { user } = useAuth();
@@ -49,30 +50,38 @@ export const ProfileDetails = () => {
       <h1>Profile Details</h1>
       <p>Name: {name}</p>
       <p>Email: {email}</p>
-      <h2>Your Owned Products</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-        {ownedProducts?.length > 0 ? (
-          ownedProducts.map((product: Product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
-        ) : (
-          <p>No owned products found.</p>
-        )}
-      </div>
-      <h2>Products You're Renting</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
-        {rentedProducts?.length > 0 ? (
-          rentedProducts.map((product: Product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              releaseFn={() => console.log("released")}
-            />
-          ))
-        ) : (
-          <p>No rented products found.</p>
-        )}
-      </div>
+      <Tabs defaultValue="Owned">
+        <TabsList className="my-3">
+          <TabsTrigger value="Owned">Owned</TabsTrigger>
+          <TabsTrigger value="Rented">Rented</TabsTrigger>
+        </TabsList>
+        <TabsContent value="Owned">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+            {ownedProducts?.length > 0 ? (
+              ownedProducts.map((product: Product) => (
+                <ProductCard key={product.id} product={product} />
+              ))
+            ) : (
+              <p>No owned products found.</p>
+            )}
+          </div>
+        </TabsContent>
+        <TabsContent value="Rented">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
+            {rentedProducts?.length > 0 ? (
+              rentedProducts.map((product: Product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  releaseFn={() => console.log("released")}
+                />
+              ))
+            ) : (
+              <p>No rented products found.</p>
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
