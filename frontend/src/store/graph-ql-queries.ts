@@ -62,3 +62,23 @@ export const GET_PRODUCT_DETAILS_QUERY = gql`
     }
   }
 `;
+
+export const GET_USER_PRODUCTS_QUERY = gql`
+  query GetUserProducts($userId: Int!) {
+    user(id: $userId) {
+      id
+      name
+      email
+      products {
+        id
+        name
+        category
+        price
+        rent
+        rentedTo
+        createdAt
+        updatedAt
+      }
+    }
+  }
+`;

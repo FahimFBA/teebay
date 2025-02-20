@@ -1,9 +1,4 @@
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
   Command,
   CommandEmpty,
   CommandGroup,
@@ -25,6 +20,7 @@ import { initialFiltersState, GET_PRODUCTS_QUERY } from "@/store";
 import { IFilterState, ProductsData } from "@/Types";
 import { filterTypes } from "@/constants";
 import { useNavigate } from "react-router-dom";
+import { ProductCard } from "@/components/Cards";
 
 // profile - details,
 // Authentication
@@ -154,20 +150,7 @@ export const Products = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <Card
-            key={product.id}
-            onClick={() => navigate("/products/" + product.id)}
-            className="cursor-pointer hover:shadow-lg"
-          >
-            <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
-              <CardDescription>{product.category}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p>Price: ${product.price}</p>
-              <p>Rent: ${product.rent}</p>
-            </CardContent>
-          </Card>
+          <ProductCard key={product.id} product={product} />
         ))}
       </div>
       <div className="my-4 flex justify-between items-center">
