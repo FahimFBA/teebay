@@ -4,17 +4,22 @@ import {
   CardHeader,
   CardTitle,
   CardDescription,
+  CardFooter,
+  Button,
 } from "@/components/ui";
 import { useNavigate } from "react-router-dom";
 import { Product } from "@/Types";
 
 export const ProductCard = ({
   product,
+  buyFn,
+  releaseFn,
+  rentFn,
 }: {
   product: Product;
-  rent?: () => void;
-  release?: () => void;
-  buy?: () => void;
+  rentFn?: () => void;
+  releaseFn?: () => void;
+  buyFn?: () => void;
 }) => {
   const navigate = useNavigate();
 
@@ -28,9 +33,16 @@ export const ProductCard = ({
         <CardDescription>{product.category}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Price: ${product.price}</p>
-        <p>Rent: ${product.rent}</p>
+        {product.price && <p>Price: ${product.price}</p>}
+        {product.rent && <p>Rent: ${product.rent}</p>}
       </CardContent>
+      <CardFooter className="flex justify-between">
+        <div className="flex gap-2">
+          {buyFn && <Button size={"sm"}>Buy</Button>}
+          {rentFn && <Button size={"sm"}>Rent</Button>}
+        </div>
+        {releaseFn && <Button size={"sm"}>Release</Button>}
+      </CardFooter>
     </Card>
   );
 };
