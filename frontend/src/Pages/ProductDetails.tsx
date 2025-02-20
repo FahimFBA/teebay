@@ -28,6 +28,7 @@ export const ProductDetails = () => {
       <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
+          <p>{product.productDescription}</p>
           <p>
             <strong>Category:</strong> {product.category}
           </p>

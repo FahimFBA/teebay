@@ -159,7 +159,11 @@ const resolvers: IResolvers = {
         });
       } catch (error) {
         console.error(`Error updating user with id ${id}:`, error);
-        throw new Error("Failed to update user");
+        if (error instanceof Error) {
+          throw new Error(`Failed to update user: ${error.message}`);
+        } else {
+          throw new Error(`Failed to update user: Unknown error`);
+        }
       }
     },
     createProduct: async (

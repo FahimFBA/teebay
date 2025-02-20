@@ -22,6 +22,7 @@ export interface Product {
   category: string;
   price: number;
   rent: number;
+  productDescription: string;
 }
 
 export interface ProductsData {
