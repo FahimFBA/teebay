@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { GET_PRODUCT_DETAILS_QUERY } from "../store/graph-ql-queries";
+import { GET_PRODUCT_DETAILS_QUERY } from "@/store";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 
@@ -28,16 +28,32 @@ export const ProductDetails = () => {
       <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <p><strong>Category:</strong> {product.category}</p>
-          <p><strong>Price:</strong> ${product.price}</p>
-          <p><strong>Rent:</strong> ${product.rent}</p>
-          <p><strong>Created At:</strong> {formatDate(parseInt(product.createdAt))}</p>
-          <p><strong>Updated At:</strong> {formatDate(parseInt(product.updatedAt))}</p>
+          <p>
+            <strong>Category:</strong> {product.category}
+          </p>
+          <p>
+            <strong>Price:</strong> ${product.price}
+          </p>
+          <p>
+            <strong>Rent:</strong> ${product.rent}
+          </p>
+          <p>
+            <strong>Created At:</strong>{" "}
+            {formatDate(parseInt(product.createdAt))}
+          </p>
+          <p>
+            <strong>Updated At:</strong>{" "}
+            {formatDate(parseInt(product.updatedAt))}
+          </p>
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-2">Owner Details</h2>
-          <p><strong>Name:</strong> {product.owner.name}</p>
-          <p><strong>Email:</strong> {product.owner.email}</p>
+          <p>
+            <strong>Name:</strong> {product.owner.name}
+          </p>
+          <p>
+            <strong>Email:</strong> {product.owner.email}
+          </p>
         </div>
       </div>
     </div>

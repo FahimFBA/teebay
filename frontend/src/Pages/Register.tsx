@@ -11,8 +11,8 @@ import {
 } from "@/components/ui";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { initialRegisterDataState, REGISTER_USER_QUERY } from "@/store";
 import { IAuthData } from "@/Types";
+import { initialRegisterDataState, REGISTER_USER_QUERY } from "@/store";
 import { useMutation } from "@apollo/client";
 
 export const Register = () => {
@@ -20,8 +20,9 @@ export const Register = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const [registerUser, { loading }] = useMutation(REGISTER_USER_QUERY, {
+  const [register, { loading }] = useMutation(REGISTER_USER_QUERY, {
     onCompleted: () => {
+      // Redirect to login page after successful registration
       navigate("/login");
     },
     onError: (error) => {
@@ -33,17 +34,18 @@ export const Register = () => {
     e.preventDefault();
     setError(null);
     try {
-      await registerUser({
+      await register({
         variables: {
           input: {
+            name: data.name,
             email: data.email,
             password: data.password,
-            name: data.name,
           },
         },
       });
     } catch (err) {
-      console.error("Registration error:", err);
+      console.error("Register error:", err);
+      setError("An error occurred during registration. Please try again.");
     }
   };
 
@@ -57,20 +59,17 @@ export const Register = () => {
     <div className="h-screen flex justify-center items-center">
       <Card className="w-[300px]">
         <CardHeader>
-          <CardTitle>Register Account</CardTitle>
-          <CardDescription>
-            Please provide your Name, Email, Password
-          </CardDescription>
+          <CardTitle>Register</CardTitle>
+          <CardDescription>Create a new account.</CardDescription>
         </CardHeader>
         <form onSubmit={onSubmit}>
           <CardContent>
-            <div className="grid w-full items-center gap-3">
+            <div className="grid w-full items-center gap-4">
               <div className="flex flex-col space-y-1.5">
                 <Label htmlFor="name">Name</Label>
                 <Input
                   id="name"
-                  placeholder="Fahim Amin"
-                  type="text"
+                  placeholder="John Doe"
                   name="name"
                   required
                   value={data.name}
@@ -81,7 +80,7 @@ export const Register = () => {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  placeholder="fahim@domain.com"
+                  placeholder="john@domain.com"
                   type="email"
                   name="email"
                   required
@@ -109,7 +108,7 @@ export const Register = () => {
               {loading ? "Registering..." : "Register"}
             </Button>
             <div className="text-xs flex">
-              <p>Already have an account?</p>
+              <p>Already have an account? </p>
               <Link to="/login" className="underline">
                 {" "}
                 Login

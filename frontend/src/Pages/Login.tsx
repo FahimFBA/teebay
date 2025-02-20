@@ -14,17 +14,17 @@ import { useState } from "react";
 import { LoginDataType } from "@/Types";
 import { initialLoginDataState, LOGIN_MUTATION_QUERY } from "@/store";
 import { useMutation } from "@apollo/client";
+import { useAuth } from "../context/AuthContext";
 
 export const Login = () => {
   const [data, setData] = useState<LoginDataType>(initialLoginDataState);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { login: authLogin } = useAuth();
 
-  const [login, { loading }] = useMutation(LOGIN_MUTATION_QUERY, {
+  const [loginMutation, { loading }] = useMutation(LOGIN_MUTATION_QUERY, {
     onCompleted: (data) => {
-      // Here you would typically store the token in localStorage or a secure storage
-      localStorage.setItem("token", data.login.token);
-      // Redirect to home page or dashboard
+      authLogin(data.login.token, data.login.user);
       navigate("/");
     },
     onError: (error) => {
@@ -36,13 +36,12 @@ export const Login = () => {
     e.preventDefault();
     setError(null);
     try {
-      const result = await login({
+      await loginMutation({
         variables: {
           email: data.email,
           password: data.password,
         },
       });
-      console.log("Login result:", result);
     } catch (err) {
       console.error("Login error:", err);
       setError("An error occurred during login. Please try again.");
