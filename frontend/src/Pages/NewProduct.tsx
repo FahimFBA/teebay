@@ -1,12 +1,21 @@
-
-import React, { useState } from 'react';
-import { useMutation } from '@apollo/client';
-import { useNavigate } from 'react-router-dom';
-import { CREATE_PRODUCT_MUTATION } from '../store/graph-ql-queries';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Label } from '../components/ui/label';
-import { useAuth } from '../context/AuthContext';
+import React, { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
+import { CREATE_PRODUCT_MUTATION } from "../store/graph-ql-queries";
+import { useAuth } from "../context/AuthContext";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+  Button,
+  Input,
+  Label,
+} from "@/components/ui";
+import { filterTypes } from "@/constants";
 
 interface FormData {
   name: string;
@@ -27,10 +36,10 @@ export const NewProduct: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [formData, setFormData] = useState<FormData>({
-    name: '',
-    category: '',
-    price: '',
-    rent: '',
+    name: "",
+    category: "",
+    price: "",
+    rent: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
 
@@ -39,8 +48,8 @@ export const NewProduct: React.FC = () => {
       navigate(`/products/${data.createProduct.id}`);
     },
     onError: (error) => {
-      console.error('Error creating product:', error);
-      setErrors({ submit: 'Failed to create product. Please try again.' });
+      console.error("Error creating product:", error);
+      setErrors({ submit: "Failed to create product. Please try again." });
     },
   });
 
@@ -52,12 +61,14 @@ export const NewProduct: React.FC = () => {
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Name is required';
-    if (!formData.category.trim()) newErrors.category = 'Category is required';
-    if (!formData.price.trim()) newErrors.price = 'Price is required';
-    if (isNaN(parseFloat(formData.price))) newErrors.price = 'Price must be a number';
-    if (!formData.rent.trim()) newErrors.rent = 'Rent is required';
-    if (isNaN(parseFloat(formData.rent))) newErrors.rent = 'Rent must be a number';
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.category.trim()) newErrors.category = "Category is required";
+    if (!formData.price.trim()) newErrors.price = "Price is required";
+    if (isNaN(parseFloat(formData.price)))
+      newErrors.price = "Price must be a number";
+    if (!formData.rent.trim()) newErrors.rent = "Rent is required";
+    if (isNaN(parseFloat(formData.rent)))
+      newErrors.rent = "Rent must be a number";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -65,7 +76,7 @@ export const NewProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!user) {
-      setErrors({ submit: 'You must be logged in to create a product.' });
+      setErrors({ submit: "You must be logged in to create a product." });
       return;
     }
     if (validateForm()) {
@@ -81,7 +92,7 @@ export const NewProduct: React.FC = () => {
           },
         });
       } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error("Error submitting form:", error);
       }
     }
   };
@@ -89,7 +100,9 @@ export const NewProduct: React.FC = () => {
   if (!user) {
     return (
       <div className="max-w-md mx-auto mt-8">
-        <p className="text-red-500">You must be logged in to create a product.</p>
+        <p className="text-red-500">
+          You must be logged in to create a product.
+        </p>
       </div>
     );
   }
@@ -105,20 +118,38 @@ export const NewProduct: React.FC = () => {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className={errors.name ? 'border-red-500' : ''}
+            className={errors.name ? "border-red-500" : ""}
           />
           {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
         <div className="mb-4">
+          <Select>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>Fruits</SelectLabel>
+                <SelectItem value="apple">Apple</SelectItem>
+                <SelectItem value="banana">Banana</SelectItem>
+                <SelectItem value="blueberry">Blueberry</SelectItem>
+                <SelectItem value="grapes">Grapes</SelectItem>
+                <SelectItem value="pineapple">Pineapple</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+
           <Label htmlFor="category">Category</Label>
           <Input
             id="category"
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            className={errors.category ? 'border-red-500' : ''}
+            className={errors.category ? "border-red-500" : ""}
           />
-          {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+          {errors.category && (
+            <p className="text-red-500 text-sm">{errors.category}</p>
+          )}
         </div>
         <div className="mb-4">
           <Label htmlFor="price">Price</Label>
@@ -129,9 +160,11 @@ export const NewProduct: React.FC = () => {
             step="0.01"
             value={formData.price}
             onChange={handleInputChange}
-            className={errors.price ? 'border-red-500' : ''}
+            className={errors.price ? "border-red-500" : ""}
           />
-          {errors.price && <p className="text-red-500 text-sm">{errors.price}</p>}
+          {errors.price && (
+            <p className="text-red-500 text-sm">{errors.price}</p>
+          )}
         </div>
         <div className="mb-4">
           <Label htmlFor="rent">Rent</Label>
@@ -142,13 +175,15 @@ export const NewProduct: React.FC = () => {
             step="0.01"
             value={formData.rent}
             onChange={handleInputChange}
-            className={errors.rent ? 'border-red-500' : ''}
+            className={errors.rent ? "border-red-500" : ""}
           />
           {errors.rent && <p className="text-red-500 text-sm">{errors.rent}</p>}
         </div>
-        {errors.submit && <p className="text-red-500 text-sm mb-4">{errors.submit}</p>}
+        {errors.submit && (
+          <p className="text-red-500 text-sm mb-4">{errors.submit}</p>
+        )}
         <Button type="submit" disabled={loading}>
-          {loading ? 'Creating...' : 'Create Product'}
+          {loading ? "Creating..." : "Create Product"}
         </Button>
       </form>
     </div>
