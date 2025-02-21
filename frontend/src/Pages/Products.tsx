@@ -54,7 +54,7 @@ export const Products = () => {
     <div className="container max-w-7xl mx-auto my-3">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Products</h1>
-        <Button onClick={() => navigate("/products/new")}>
+        <Button onClick={() => navigate("/new-product")}>
           <Plus className="mr-2 h-4 w-4" /> Create New Product
         </Button>
       </div>

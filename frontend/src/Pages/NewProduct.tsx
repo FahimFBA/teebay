@@ -42,6 +42,7 @@ export const NewProduct: React.FC = () => {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [currentStep, setCurrentStep] = useState(1);
+  const [isConfirmed, setIsConfirmed] = useState(false);
 
   const [createProduct, { loading }] = useMutation(CREATE_PRODUCT_MUTATION, {
     onCompleted: (data) => {
@@ -53,7 +54,9 @@ export const NewProduct: React.FC = () => {
     },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: undefined });
@@ -71,11 +74,13 @@ export const NewProduct: React.FC = () => {
         if (!formData.name.trim()) newErrors.name = "Name is required";
         break;
       case 2:
-        if (!formData.category.trim()) newErrors.category = "Category is required";
+        if (!formData.category.trim())
+          newErrors.category = "Category is required";
         break;
       case 3:
         if (!formData.price.trim()) newErrors.price = "Price is required";
-        if (isNaN(parseFloat(formData.price))) newErrors.price = "Price must be a number";
+        if (isNaN(parseFloat(formData.price)))
+          newErrors.price = "Price must be a number";
         break;
       case 4:
         if (formData.rent.trim() && isNaN(parseFloat(formData.rent)))
@@ -102,7 +107,7 @@ export const NewProduct: React.FC = () => {
       setErrors({ submit: "You must be logged in to create a product." });
       return;
     }
-    if (validateStep(4)) {
+    if (validateStep(4) && isConfirmed) {
       try {
         await createProduct({
           variables: {
@@ -144,14 +149,19 @@ export const NewProduct: React.FC = () => {
               onChange={handleInputChange}
               className={errors.name ? "border-red-500" : ""}
             />
-            {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name}</p>
+            )}
           </div>
         );
       case 2:
         return (
           <div className="mb-4">
             <Label htmlFor="category">Category</Label>
-            <Select onValueChange={handleSelectChange} value={formData.category}>
+            <Select
+              onValueChange={handleSelectChange}
+              value={formData.category}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
@@ -201,7 +211,29 @@ export const NewProduct: React.FC = () => {
               onChange={handleInputChange}
               className={errors.rent ? "border-red-500" : ""}
             />
-            {errors.rent && <p className="text-red-500 text-sm">{errors.rent}</p>}
+            {errors.rent && (
+              <p className="text-red-500 text-sm">{errors.rent}</p>
+            )}
+          </div>
+        );
+      case 5:
+        return (
+          <div className="mb-4">
+            <h2 className="text-xl font-semibold mb-2">Confirm Product Details</h2>
+            <p><strong>Name:</strong> {formData.name}</p>
+            <p><strong>Category:</strong> {formData.category}</p>
+            <p><strong>Price:</strong> ${formData.price}</p>
+            {formData.rent && <p><strong>Rent:</strong> ${formData.rent}</p>}
+            <div className="mt-4">
+              <input
+                type="checkbox"
+                id="confirm"
+                checked={isConfirmed}
+                onChange={(e) => setIsConfirmed(e.target.checked)}
+                className="mr-2"
+              />
+              <label htmlFor="confirm">I confirm that the details are correct</label>
+            </div>
           </div>
         );
     }
@@ -212,17 +244,17 @@ export const NewProduct: React.FC = () => {
       <h1 className="text-2xl font-bold mb-4">Create New Product</h1>
       <div className="mb-4">
         <div className="flex justify-between">
-          {[1, 2, 3, 4].map((step) => (
+          {[1, 2, 3, 4, 5].map((step) => (
             <div
               key={step}
-              className={`w-1/4 h-2 ${
+              className={`w-1/6 h-2 ${
                 step <= currentStep ? "bg-blue-500" : "bg-gray-300"
               }`}
             ></div>
           ))}
         </div>
         <div className="flex justify-between mt-2">
-          {["Name", "Category", "Price", "Rent"].map((label, index) => (
+          {["Name", "Category", "Price", "Rent", "Confirm"].map((label, index) => (
             <span
               key={index}
               className={`text-sm ${
@@ -245,12 +277,12 @@ export const NewProduct: React.FC = () => {
               Previous
             </Button>
           )}
-          {currentStep < 4 ? (
+          {currentStep < 5 ? (
             <Button type="button" onClick={handleNext}>
               Next
             </Button>
           ) : (
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading || !isConfirmed}>
               {loading ? "Creating..." : "Create Product"}
             </Button>
           )}
