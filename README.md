@@ -150,40 +150,7 @@ Based on the API structure, the frontend likely includes the following routes:
 - `/my-products`: User's product listings
 - `/rented-products`: Products rented by the user
 
-## Development
 
-- The backend uses `nodemon` for hot-reloading during development.
-- The frontend uses Vite's hot module replacement (HMR) for fast refresh during development.
-
-## Testing
-
-Currently, there is no specific testing setup described in the project. It's recommended to add unit tests for both backend and frontend components. Some suggested testing frameworks:
-
-- Backend: Jest with TypeScript support
-- Frontend: React Testing Library with Jest
-
-To set up testing, you would typically:
-
-1. Install testing dependencies
-2. Create test files alongside your source files (e.g., `Component.test.tsx` for React components)
-3. Run tests using a command like `npm test`
-
-## Deployment
-
-While specific deployment instructions are not provided, here are some general guidelines for deploying this full-stack application:
-
-1. Backend Deployment:
-   - Choose a cloud provider (e.g., Heroku, AWS, DigitalOcean)
-   - Set up environment variables for production
-   - Ensure your database is properly secured and accessible
-   - Deploy the Node.js application
-
-2. Frontend Deployment:
-   - Build the React application using `npm run build`
-   - Deploy the built files to a static hosting service (e.g., Netlify, Vercel, AWS S3)
-
-3. Configure CORS settings in the backend to allow requests from your frontend domain
-4. Set up a CI/CD pipeline for automated deployments
 
 ## Contributing
 
