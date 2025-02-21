@@ -1,12 +1,60 @@
 import { useAuth } from "@/context/AuthContext";
-import { useQuery } from "@apollo/client";
-import { GET_USER_PRODUCTS_QUERY, GET_RENTED_PRODUCTS_QUERY } from "@/store";
+import { useQuery, useMutation, ApolloError } from "@apollo/client";
+import {
+  GET_USER_PRODUCTS_QUERY,
+  GET_RENTED_PRODUCTS_QUERY,
+  UPDATE_PRODUCT_MUTATION,
+} from "@/store";
 import { Product } from "@/Types";
 import { ProductCard } from "@/components/Cards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 
 export const ProfileDetails = () => {
   const { user } = useAuth();
+  const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION);
+
+  const handleReleaseProduct = async (productId: number) => {
+    if (!user?.id) {
+      console.error("User not logged in");
+      return;
+    }
+
+    const variables = {
+      id: productId,
+      input: {},
+      release: true
+    };
+
+    try {
+      const result = await updateProduct({
+        variables,
+        refetchQueries: [
+          { query: GET_RENTED_PRODUCTS_QUERY, variables: { userId: user.id } },
+          { query: GET_USER_PRODUCTS_QUERY, variables: { userId: user.id } },
+        ],
+      });
+      console.log("Update product result:", result);
+      
+      if (result.data?.updateProduct?.error) {
+        console.error("Server-side error:", result.data.updateProduct.error.message);
+      } else {
+        console.log("Product successfully released");
+      }
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        console.error("Error releasing product:", error.message);
+        if (error.graphQLErrors) {
+          console.error("GraphQL errors:", error.graphQLErrors);
+        }
+        if (error.networkError) {
+          console.error("Network error:", error.networkError);
+        }
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
+
   const {
     loading: ownedLoading,
     error: ownedError,
@@ -52,8 +100,12 @@ export const ProfileDetails = () => {
       <p>Email: {email}</p>
       <Tabs defaultValue="Owned">
         <TabsList className="my-3">
-          <TabsTrigger value="Owned">Owned</TabsTrigger>
-          <TabsTrigger value="Rented">Rented</TabsTrigger>
+          <TabsTrigger value="Owned">
+            Owned ({ownedProducts?.length})
+          </TabsTrigger>
+          <TabsTrigger value="Rented">
+            Rented ({rentedProducts?.length})
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="Owned">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
@@ -73,7 +125,7 @@ export const ProfileDetails = () => {
                 <ProductCard
                   key={product.id}
                   product={product}
-                  releaseFn={() => console.log("released")}
+                  releaseFn={() => handleReleaseProduct(Number(product.id))}
                 />
               ))
             ) : (

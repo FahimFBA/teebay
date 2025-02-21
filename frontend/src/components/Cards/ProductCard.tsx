@@ -15,18 +15,22 @@ export const ProductCard = ({
   buyFn,
   releaseFn,
   rentFn,
+  deleteFn,
+  editFn,
 }: {
   product: Product;
   rentFn?: () => void;
   releaseFn?: () => void;
   buyFn?: () => void;
+  deleteFn?: () => void;
+  editFn?: () => void;
 }) => {
   const navigate = useNavigate();
 
   return (
     <Card
       onClick={() => navigate("/products/" + product.id)}
-      className="cursor-pointer hover:shadow-lg"
+      className="hover:shadow-lg"
     >
       <CardHeader>
         <CardTitle>{product.name}</CardTitle>
@@ -38,10 +42,63 @@ export const ProductCard = ({
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="flex gap-2">
-          {buyFn && <Button size={"sm"}>Buy</Button>}
-          {rentFn && <Button size={"sm"}>Rent</Button>}
+          {deleteFn && (
+            <Button
+              size={"sm"}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFn();
+              }}
+            >
+              deleteFn
+            </Button>
+          )}
+          {editFn && (
+            <Button
+              size={"sm"}
+              onClick={(e) => {
+                e.stopPropagation();
+                editFn();
+              }}
+            >
+              editFn
+            </Button>
+          )}
+
+          {buyFn && (
+            <Button
+              size={"sm"}
+              onClick={(e) => {
+                e.stopPropagation();
+                buyFn();
+              }}
+            >
+              Buy
+            </Button>
+          )}
+          {rentFn && (
+            <Button
+              size={"sm"}
+              onClick={(e) => {
+                e.stopPropagation();
+                rentFn();
+              }}
+            >
+              Rent
+            </Button>
+          )}
         </div>
-        {releaseFn && <Button size={"sm"}>Release</Button>}
+        {releaseFn && (
+          <Button
+            size={"sm"}
+            onClick={(e) => {
+              e.stopPropagation();
+              releaseFn();
+            }}
+          >
+            Release
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

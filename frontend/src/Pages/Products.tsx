@@ -19,18 +19,16 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { initialFiltersState, GET_PRODUCTS_QUERY } from "@/store";
 import { IFilterState, ProductsData } from "@/Types";
 import { filterTypes } from "@/constants";
-import { useNavigate } from "react-router-dom";
 import { ProductCard } from "@/components/Cards";
 
 // profile - details,
-// Authentication
+// ✅ Authentication
 // ✅ product details page
 // list products on profile - edit, delete, create product(owner),
 // buy, rent - button,
 // debounce
 
 export const Products = () => {
-  const navigate = useNavigate();
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
 
   const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
