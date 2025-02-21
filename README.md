@@ -1,108 +1,202 @@
 # Teebay
 
-Teebay is an Express TypeScript API project that uses Prisma as an ORM to interact with a PostgreSQL database.
+Teebay is a full-stack web application that combines a GraphQL API backend with a React frontend. It's designed to facilitate the buying, selling, and renting of products between users. The platform allows users to create accounts, list products for sale or rent, and manage their transactions.
 
-## Project Setup
+## Technologies Used
+
+### Backend
+- Node.js
+- Express
+- TypeScript
+- Apollo Server (GraphQL)
+- Prisma (ORM)
+- PostgreSQL
+- JSON Web Tokens (JWT) for authentication
+- bcrypt for password hashing
+- Winston for logging
+
+### Frontend
+- React
+- TypeScript
+- Vite (build tool)
+- Apollo Client (for GraphQL integration)
+- React Router
+- Tailwind CSS
+- Radix UI (for accessible component primitives)
+
+## Project Structure
+
+The project is divided into two main directories:
+
+- `backend/`: Contains the GraphQL API server
+  - `src/`: Source files for the backend
+    - `index.ts`: Entry point of the server
+    - `schema.ts`: GraphQL schema definition
+    - `resolvers.ts`: GraphQL resolvers
+  - `prisma/`: Prisma ORM files
+    - `schema.prisma`: Database schema definition
+  - `.env.example`: Example environment variables for the backend
+
+- `frontend/`: Contains the React application
+  - `src/`: Source files for the frontend
+    - `components/`: Reusable React components
+    - `Pages/`: React components for different routes
+    - `store/`: State management files (e.g., GraphQL queries)
+    - `context/`: React context files (e.g., AuthContext)
+    - `App.tsx`: Main application component
+  - `vite.config.ts`: Vite build tool configuration
+  - `.env.example`: Example environment variables for the frontend
+
+Key configuration files:
+- `tsconfig.json`: TypeScript configuration for both backend and frontend
+- `package.json`: Project dependencies and scripts for both backend and frontend
+- `components.json`: (Frontend) Possibly contains component configurations
+
+## Setup and Installation
 
 ### Prerequisites
-
-- Node.js
-- npm
+- Node.js (v14 or later)
+- npm (v6 or later)
 - PostgreSQL
 
-### Installation
-
-1. Clone the repository:
+### Backend Setup
+1. Navigate to the backend directory:
    ```
-   git clone <repository-url>
-   cd teebay
+   cd backend
    ```
-
 2. Install dependencies:
    ```
    npm install
    ```
-
-3. Set up your environment variables:
-   - Copy `.env.example` to `.env`
-   - Update the `DATABASE_URL` in `.env` with your PostgreSQL connection string
-
-4. Set up the database:
+3. Create a `.env` file based on `.env.example` and update the database connection string and other environment variables.
+4. Run Prisma migrations:
    ```
-   npx prisma migrate dev --name init
+   npx prisma migrate dev
+   ```
+5. Generate Prisma client:
+   ```
    npx prisma generate
    ```
 
+### Frontend Setup
+1. Navigate to the frontend directory:
+   ```
+   cd frontend
+   ```
+2. Install dependencies:
+   ```
+   npm install
+   ```
+3. Create a `.env` file based on `.env.example` and update any necessary environment variables.
+
 ## Running the Application
 
-To start the development server:
+### Backend
+In the `backend` directory:
+- For development: `npm run dev`
+- For production: `npm start`
 
-```
-npm run dev
-```
+The GraphQL server will start on `http://localhost:4000` (or the port specified in your `.env` file).
 
-The server will start on `http://localhost:3001`.
+### Frontend
+In the `frontend` directory:
+- For development: `npm run dev`
+- For production build: `npm run build`
 
-## API Endpoints
+The development server will start on `http://localhost:5173`.
 
-- `POST /users`: Create a new user
-- `GET /users`: Get all users
-- `GET /test-db-connection`: Test the database connection
+## Features
 
-## Database Schema
+- User authentication and authorization
+- User profile management
+- Product listing creation and management
+- Product search with filtering options
+- Product rental system
+- Pagination for users and products listings
 
-The current schema includes a `User` model:
+## API Documentation
 
-```prisma
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-```
+The backend uses GraphQL. Here's a brief overview of the main queries and mutations:
 
-## Commands Used
+### Queries
+- `users`: Fetch paginated list of users
+- `user`: Fetch a single user by ID
+- `products`: Fetch paginated list of products with optional filters
+- `product`: Fetch a single product by ID
+- `rentedProducts`: Fetch products rented by a specific user
 
-- Project initialization:
-  ```
-  npm init -y
-  ```
+### Mutations
+- `login`: Authenticate a user and receive a JWT token
+- `createUser`: Register a new user
+- `updateUser`: Update user profile information
+- `createProduct`: Create a new product listing
+- `updateProduct`: Update an existing product listing
+- `deleteProduct`: Remove a product listing
+- `rentProduct`: Rent a product to a user
 
-- Installing dependencies:
-  ```
-  npm install express @types/express @prisma/client pg
-  npm install -D typescript @types/node ts-node nodemon prisma
-  ```
+For full API documentation, run the backend server and visit the GraphQL Playground at `http://localhost:4000/graphql`.
 
-- TypeScript configuration:
-  ```
-  npx tsc --init
-  ```
+## Frontend Routes
 
-- Prisma setup:
-  ```
-  npx prisma init
-  npx prisma migrate dev --name init
-  npx prisma generate
-  ```
+Based on the API structure, the frontend likely includes the following routes:
 
-- Running the server:
-  ```
-  npm run dev
-  ```
+- `/`: Home page with product listings
+- `/login`: User login page
+- `/register`: User registration page
+- `/profile`: User profile page
+- `/products/new`: Create new product listing
+- `/products/:id`: View product details
+- `/products/:id/edit`: Edit product listing
+- `/my-products`: User's product listings
+- `/rented-products`: Products rented by the user
 
 ## Development
 
-The project uses nodemon for hot-reloading during development. Any changes to the TypeScript files will automatically restart the server.
+- The backend uses `nodemon` for hot-reloading during development.
+- The frontend uses Vite's hot module replacement (HMR) for fast refresh during development.
 
 ## Testing
 
-To test the API endpoints, you can use tools like curl or Postman. For example:
+Currently, there is no specific testing setup described in the project. It's recommended to add unit tests for both backend and frontend components. Some suggested testing frameworks:
 
-```
-curl http://localhost:3001/test-db-connection
-```
+- Backend: Jest with TypeScript support
+- Frontend: React Testing Library with Jest
 
-This should return a JSON response indicating whether the database connection was successful.
+To set up testing, you would typically:
+
+1. Install testing dependencies
+2. Create test files alongside your source files (e.g., `Component.test.tsx` for React components)
+3. Run tests using a command like `npm test`
+
+## Deployment
+
+While specific deployment instructions are not provided, here are some general guidelines for deploying this full-stack application:
+
+1. Backend Deployment:
+   - Choose a cloud provider (e.g., Heroku, AWS, DigitalOcean)
+   - Set up environment variables for production
+   - Ensure your database is properly secured and accessible
+   - Deploy the Node.js application
+
+2. Frontend Deployment:
+   - Build the React application using `npm run build`
+   - Deploy the built files to a static hosting service (e.g., Netlify, Vercel, AWS S3)
+
+3. Configure CORS settings in the backend to allow requests from your frontend domain
+4. Set up a CI/CD pipeline for automated deployments
+
+## Contributing
+
+Contributions to Teebay are welcome! Here are some guidelines:
+
+1. Fork the repository
+2. Create a new branch: `git checkout -b feature-branch-name`
+3. Make your changes and commit them: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature-branch-name`
+5. Submit a pull request
+
+Please ensure your code adheres to the existing style and that you've added tests for new features.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
