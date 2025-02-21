@@ -8,7 +8,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
   Button,
@@ -35,7 +34,7 @@ interface FormErrors {
 export const NewProduct: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [formData, setFormData] = useState<FormData>({
+const [formData, setFormData] = useState<FormData>({
     name: "",
     category: "",
     price: "",
@@ -53,10 +52,15 @@ export const NewProduct: React.FC = () => {
     },
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setErrors({ ...errors, [name]: undefined });
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData({ ...formData, category: value });
+    setErrors({ ...errors, category: undefined });
   };
 
   const validateForm = (): boolean => {
@@ -66,9 +70,8 @@ export const NewProduct: React.FC = () => {
     if (!formData.price.trim()) newErrors.price = "Price is required";
     if (isNaN(parseFloat(formData.price)))
       newErrors.price = "Price must be a number";
-    if (!formData.rent.trim()) newErrors.rent = "Rent is required";
-    if (isNaN(parseFloat(formData.rent)))
-      newErrors.rent = "Rent must be a number";
+    if (formData.rent.trim() && isNaN(parseFloat(formData.rent)))
+      newErrors.rent = "Rent must be a number if provided";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -84,9 +87,10 @@ export const NewProduct: React.FC = () => {
         await createProduct({
           variables: {
             input: {
-              ...formData,
+              name: formData.name,
+              category: formData.category,
               price: parseFloat(formData.price),
-              rent: parseFloat(formData.rent),
+              rent: formData.rent ? parseFloat(formData.rent) : null,
               ownerId: user.id,
             },
           },
@@ -123,30 +127,21 @@ export const NewProduct: React.FC = () => {
           {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
         </div>
         <div className="mb-4">
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a fruit" />
+          <Label htmlFor="category">Category</Label>
+          <Select onValueChange={handleSelectChange} value={formData.category}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a category" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Fruits</SelectLabel>
-                <SelectItem value="apple">Apple</SelectItem>
-                <SelectItem value="banana">Banana</SelectItem>
-                <SelectItem value="blueberry">Blueberry</SelectItem>
-                <SelectItem value="grapes">Grapes</SelectItem>
-                <SelectItem value="pineapple">Pineapple</SelectItem>
+                {filterTypes.map((category) => (
+                  <SelectItem key={category.value} value={category.value}>
+                    {category.label}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>
-
-          <Label htmlFor="category">Category</Label>
-          <Input
-            id="category"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            className={errors.category ? "border-red-500" : ""}
-          />
           {errors.category && (
             <p className="text-red-500 text-sm">{errors.category}</p>
           )}
