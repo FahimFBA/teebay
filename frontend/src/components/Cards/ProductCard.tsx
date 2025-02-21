@@ -23,7 +23,7 @@ export const ProductCard = ({
   releaseFn?: () => void;
   buyFn?: () => void;
   deleteFn?: () => void;
-  editFn?: () => void;
+  editFn?: () => Promise<void>;
 }) => {
   const navigate = useNavigate();
 
@@ -50,7 +50,7 @@ export const ProductCard = ({
                 deleteFn();
               }}
             >
-              deleteFn
+              Delete
             </Button>
           )}
           {editFn && (

@@ -194,6 +194,7 @@ const resolvers: IResolvers = {
       {
         id,
         input,
+        release,
       }: {
         id: number;
         input: {
@@ -202,16 +203,39 @@ const resolvers: IResolvers = {
           price?: number;
           rent?: number;
         };
+        release?: boolean;
       }
     ) => {
       try {
-        return await prisma.product.update({
+        const updateData: {
+          name?: string;
+          category?: string;
+          price?: number;
+          rent?: number;
+          rentedTo?: number | null;
+        } = { ...input };
+        
+        if (release) {
+          updateData.rentedTo = null;
+        }
+        
+        const updatedProduct = await prisma.product.update({
           where: { id },
-          data: input,
+          data: updateData,
         });
+        
+        return {
+          ...updatedProduct,
+          error: null,
+        };
       } catch (error) {
         console.error(`Error updating product with id ${id}:`, error);
-        throw new Error("Failed to update product");
+        return {
+          id,
+          error: {
+            message: "Failed to update product",
+          },
+        };
       }
     },
     deleteProduct: async (_: any, { id }: { id: number }) => {

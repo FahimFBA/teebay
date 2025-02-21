@@ -4,6 +4,7 @@ import {
   GET_USER_PRODUCTS_QUERY,
   GET_RENTED_PRODUCTS_QUERY,
   UPDATE_PRODUCT_MUTATION,
+  DELETE_PRODUCT_MUTATION,
 } from "@/store";
 import { Product } from "@/Types";
 import { ProductCard } from "@/components/Cards";
@@ -12,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
 export const ProfileDetails = () => {
   const { user } = useAuth();
   const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION);
 
   const handleReleaseProduct = async (productId: number) => {
     if (!user?.id) {
@@ -22,7 +24,7 @@ export const ProfileDetails = () => {
     const variables = {
       id: productId,
       input: {},
-      release: true
+      release: true,
     };
 
     try {
@@ -34,15 +36,52 @@ export const ProfileDetails = () => {
         ],
       });
       console.log("Update product result:", result);
-      
+
       if (result.data?.updateProduct?.error) {
-        console.error("Server-side error:", result.data.updateProduct.error.message);
+        console.error(
+          "Server-side error:",
+          result.data.updateProduct.error.message
+        );
       } else {
         console.log("Product successfully released");
       }
     } catch (error) {
       if (error instanceof ApolloError) {
         console.error("Error releasing product:", error.message);
+        if (error.graphQLErrors) {
+          console.error("GraphQL errors:", error.graphQLErrors);
+        }
+        if (error.networkError) {
+          console.error("Network error:", error.networkError);
+        }
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
+  };
+
+  const handleDeleteProductFn = async (productId: number) => {
+    if (!user?.id) {
+      console.error("User not logged in");
+      return;
+    }
+
+    try {
+      const result = await deleteProduct({
+        variables: { id: productId },
+        refetchQueries: [
+          { query: GET_USER_PRODUCTS_QUERY, variables: { userId: user.id } },
+        ],
+      });
+
+      if (result.data?.deleteProduct) {
+        console.log("Product successfully deleted");
+      } else {
+        console.error("Failed to delete product");
+      }
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        console.error("Error deleting product:", error.message);
         if (error.graphQLErrors) {
           console.error("GraphQL errors:", error.graphQLErrors);
         }
@@ -111,7 +150,11 @@ export const ProfileDetails = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 my-4">
             {ownedProducts?.length > 0 ? (
               ownedProducts.map((product: Product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  deleteFn={() => handleDeleteProductFn(Number(product.id))}
+                />
               ))
             ) : (
               <p>No owned products found.</p>
