@@ -162,7 +162,6 @@ Contributions to Teebay are welcome! Here are some guidelines:
 4. Push to the branch: `git push origin feature-branch-name`
 5. Submit a pull request
 
-Please ensure your code adheres to the existing style and that you've added tests for new features.
 
 ## License
 
