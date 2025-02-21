@@ -128,3 +128,15 @@ export const DELETE_PRODUCT_MUTATION = gql`
     }
   }
 `;
+
+export const CREATE_PRODUCT_MUTATION = gql`
+  mutation CreateProduct($input: CreateProductInput!) {
+    createProduct(input: $input) {
+      id
+      name
+      category
+      price
+      rent
+    }
+  }
+`;

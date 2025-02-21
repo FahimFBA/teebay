@@ -7,6 +7,7 @@ import {
   ProfileDetails,
   Login,
   Register,
+  NewProduct,
 } from "./Pages";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/" element={<Home />} />
             <Route path="/profile" element={<ProfileDetails />} />
             <Route path="/products" element={<Products />} />
+            <Route path="/new-product" element={<NewProduct />} />
             <Route path="/products/:id" element={<ProductDetails />} />
             <Route path="/settings" element={<Settings />} />
           </Route>

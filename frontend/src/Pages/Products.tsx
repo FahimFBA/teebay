@@ -13,22 +13,25 @@ import {
 } from "@/components/ui";
 import { useQuery } from "@apollo/client";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import { initialFiltersState, GET_PRODUCTS_QUERY } from "@/store";
 import { IFilterState, ProductsData } from "@/Types";
 import { filterTypes } from "@/constants";
 import { ProductCard } from "@/components/Cards";
 
-// profile - details,
-// ✅ Authentication
-// ✅ product details page
-// list products on profile - edit, delete, create product(owner),
-// buy, rent - button,
-// debounce
+// Type assertions for UI components
+const TypedCommand = Command as React.FC<{ children: React.ReactNode }>;
+const TypedCommandInput = CommandInput as React.FC<{ placeholder: string }>;
+const TypedCommandList = CommandList as React.FC<{ children: React.ReactNode }>;
+const TypedCommandEmpty = CommandEmpty as React.FC<{ children: React.ReactNode }>;
+const TypedCommandGroup = CommandGroup as React.FC<{ children: React.ReactNode }>;
+const TypedCommandItem = CommandItem as React.FC<{ onSelect: (value: string) => void; children: React.ReactNode }>;
 
 export const Products = () => {
+  const navigate = useNavigate();
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
 
   const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
@@ -49,7 +52,12 @@ export const Products = () => {
 
   return (
     <div className="container max-w-7xl mx-auto my-3">
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Products</h1>
+        <Button onClick={() => navigate("/products/new")}>
+          <Plus className="mr-2 h-4 w-4" /> Create New Product
+        </Button>
+      </div>
 
       <div className="flex flex-row gap-2">
         <Popover>
@@ -68,20 +76,14 @@ export const Products = () => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
-            {/* @ts-expect-error ...... */}
-            <Command>
-              {/* @ts-expect-error ...... */}
-              <CommandInput placeholder="Search for category" />
-              {/* @ts-expect-error ...... */}
-              <CommandList>
-                {/* @ts-expect-error ...... */}
-                <CommandEmpty>No framework found.</CommandEmpty>
-                {/* @ts-expect-error ...... */}
-                <CommandGroup>
+            <TypedCommand>
+              <TypedCommandInput placeholder="Search for category" />
+              <TypedCommandList>
+                <TypedCommandEmpty>No framework found.</TypedCommandEmpty>
+                <TypedCommandGroup>
                   {filterTypes.map((item) => (
-                    <CommandItem
+                    <TypedCommandItem
                       key={item.value}
-                      value={item.value}
                       onSelect={(currentValue: string) => {
                         setFilters({
                           ...filters,
@@ -104,11 +106,11 @@ export const Products = () => {
                             : "opacity-0"
                         )}
                       />
-                    </CommandItem>
+                    </TypedCommandItem>
                   ))}
-                </CommandGroup>
-              </CommandList>
-            </Command>
+                </TypedCommandGroup>
+              </TypedCommandList>
+            </TypedCommand>
           </PopoverContent>
         </Popover>
 

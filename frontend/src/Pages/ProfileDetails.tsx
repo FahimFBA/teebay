@@ -8,9 +8,17 @@ import {
 } from "@/store";
 import { Product } from "@/Types";
 import { ProductCard } from "@/components/Cards";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  Button,
+} from "@/components/ui";
+import { useNavigate } from "react-router-dom";
 
 export const ProfileDetails = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION);
   const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION);
@@ -137,6 +145,11 @@ export const ProfileDetails = () => {
       <h1>Profile Details</h1>
       <p>Name: {name}</p>
       <p>Email: {email}</p>
+
+      <Button onClick={() => navigate("/new-product")} className="">
+        Create New Product
+      </Button>
+
       <Tabs defaultValue="Owned">
         <TabsList className="my-3">
           <TabsTrigger value="Owned">
