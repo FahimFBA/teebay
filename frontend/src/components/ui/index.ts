@@ -7,3 +7,4 @@ export * from "./dialog";
 export * from "./popover";
 export * from "./tabs";
 export * from "./select";
+export * from "./alert-dialog";

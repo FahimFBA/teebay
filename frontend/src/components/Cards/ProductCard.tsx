@@ -6,6 +6,15 @@ import {
   CardDescription,
   CardFooter,
   Button,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui";
 import { useNavigate } from "react-router-dom";
 import { Product } from "@/Types";
@@ -43,15 +52,33 @@ export const ProductCard = ({
       <CardFooter className="flex justify-between">
         <div className="flex gap-2">
           {deleteFn && (
-            <Button
-              size={"sm"}
-              onClick={(e) => {
-                e.stopPropagation();
-                deleteFn();
-              }}
-            >
-              Delete
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger onClick={(e) => e.stopPropagation()}>
+                <Button size="sm">Delete</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to delete this product?
+                  </AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your product listing and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteFn();
+                    }}
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
           {editFn && (
             <Button
