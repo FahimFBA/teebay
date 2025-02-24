@@ -140,3 +140,17 @@ export const CREATE_PRODUCT_MUTATION = gql`
     }
   }
 `;
+
+export const RELEASE_PRODUCT_MUTATION = gql`
+  mutation ReleaseProduct($id: Int!, $rentedTo: Int!) {
+    rentProduct(id: $id, rentedTo: $rentedTo) {
+      id
+      name
+      category
+      price
+      rent
+      rentedTo
+      updatedAt
+    }
+  }
+`;

@@ -3,8 +3,8 @@ import { useQuery, useMutation, ApolloError } from "@apollo/client";
 import {
   GET_USER_PRODUCTS_QUERY,
   GET_RENTED_PRODUCTS_QUERY,
-  UPDATE_PRODUCT_MUTATION,
   DELETE_PRODUCT_MUTATION,
+  RELEASE_PRODUCT_MUTATION,
 } from "@/store";
 import { Product } from "@/Types";
 import { ProductCard } from "@/components/Cards";
@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 export const ProfileDetails = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION);
+  const [releaseProduct] = useMutation(RELEASE_PRODUCT_MUTATION);
   const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION);
 
   const handleReleaseProduct = async (productId: number) => {
@@ -29,29 +29,23 @@ export const ProfileDetails = () => {
       return;
     }
 
-    const variables = {
-      id: productId,
-      input: {},
-      release: true,
-    };
-
     try {
-      const result = await updateProduct({
-        variables,
+      const result = await releaseProduct({
+        variables: {
+          id: productId,
+          rentedTo: 0
+        },
         refetchQueries: [
           { query: GET_RENTED_PRODUCTS_QUERY, variables: { userId: user.id } },
           { query: GET_USER_PRODUCTS_QUERY, variables: { userId: user.id } },
         ],
       });
-      console.log("Update product result:", result);
+      console.log("Release product result:", result);
 
-      if (result.data?.updateProduct?.error) {
-        console.error(
-          "Server-side error:",
-          result.data.updateProduct.error.message
-        );
-      } else {
+      if (result.data?.rentProduct) {
         console.log("Product successfully released");
+      } else {
+        console.error("Failed to release product");
       }
     } catch (error) {
       if (error instanceof ApolloError) {
