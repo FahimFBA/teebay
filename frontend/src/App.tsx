@@ -11,11 +11,13 @@ import {
 } from "./Pages";
 import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/PrivateRoute";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
