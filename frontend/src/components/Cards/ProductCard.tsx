@@ -96,6 +96,8 @@ export const ProductCard = ({
   const ownedByYou = user?.id === product.owner?.id;
   const isNotRented = product.rentedTo === 0;
 
+  console.log(ownedByYou, user?.id, product.owner?.id);
+
   return (
     <Card
       onClick={() => navigate("/products/" + product.id)}
@@ -128,18 +130,22 @@ export const ProductCard = ({
               Delete
             </ActionButton>
           )}
-          {ownedByYou && editFn && <ActionButton onClick={editFn}>Edit</ActionButton>}
-          {!ownedByYou && buyFn && <ActionButton onClick={buyFn}>Buy</ActionButton>}
-          {!ownedByYou && isNotRented && rentFn && (
+          {ownedByYou && editFn && (
+            <ActionButton onClick={editFn}>Edit</ActionButton>
+          )}
+          {!ownedByYou && buyFn && (
+            <ActionButton onClick={buyFn}>Buy</ActionButton>
+          )}
+          {rentFn && !ownedByYou && isNotRented && (
             <ActionButton onClick={rentFn}>Rent</ActionButton>
           )}
-          {(ownedByYou || !isNotRented) && (
+          {(ownedByYou || !isNotRented) && rentFn && (
             <Button size="sm" variant="secondary" disabled>
               {ownedByYou ? "Your Product" : "Unavailable"}
             </Button>
           )}
         </div>
-        {ownedByYou && releaseFn && (
+        {releaseFn && (
           <ActionButton
             onClick={releaseFn}
             alertProps={{
