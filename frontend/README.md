@@ -16,7 +16,7 @@
 
 ## Rent
 
-* Rent a product
+* ✅ Rent a product
 * ✅ Release a product
 
 ## UI 
