@@ -20,7 +20,7 @@
 * ✅ Release a product
 
 ## UI 
-* Navbar with Auth Features
+* ✅ Navbar with Auth Features
 * Edit profile
 * Debouncing
 
