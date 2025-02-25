@@ -7,7 +7,7 @@
 * ✅ Read 1 product 
 * ✅ Read all products
 * ✅ Delete Product
-* Edit Product
+* ✅ Edit Product
 * Add product Description
 
 ## Purchase 
@@ -29,3 +29,4 @@ Id: 3
 email: newuser2@example.com
 total rented product: 37
 total owned products: 42
+password: newPassword123

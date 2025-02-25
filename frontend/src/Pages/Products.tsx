@@ -10,6 +10,18 @@ import {
   PopoverContent,
   PopoverTrigger,
   Input,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  Label,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
 } from "@/components/ui";
 import { useQuery, useMutation } from "@apollo/client";
 import { useState } from "react";
@@ -17,8 +29,13 @@ import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { initialFiltersState, GET_PRODUCTS_QUERY, RENT_PRODUCT_MUTATION } from "@/store";
-import { IFilterState, ProductsData } from "@/Types";
+import {
+  initialFiltersState,
+  GET_PRODUCTS_QUERY,
+  RENT_PRODUCT_MUTATION,
+  UPDATE_PRODUCT_MUTATION,
+} from "@/store";
+import { IFilterState, ProductsData, Product } from "@/Types";
 import { filterTypes } from "@/constants";
 import { ProductCard } from "@/components/Cards";
 import { useAuth } from "@/context/AuthContext";
@@ -27,9 +44,16 @@ import { useAuth } from "@/context/AuthContext";
 const TypedCommand = Command as React.FC<{ children: React.ReactNode }>;
 const TypedCommandInput = CommandInput as React.FC<{ placeholder: string }>;
 const TypedCommandList = CommandList as React.FC<{ children: React.ReactNode }>;
-const TypedCommandEmpty = CommandEmpty as React.FC<{ children: React.ReactNode }>;
-const TypedCommandGroup = CommandGroup as React.FC<{ children: React.ReactNode }>;
-const TypedCommandItem = CommandItem as React.FC<{ onSelect: (value: string) => void; children: React.ReactNode }>;
+const TypedCommandEmpty = CommandEmpty as React.FC<{
+  children: React.ReactNode;
+}>;
+const TypedCommandGroup = CommandGroup as React.FC<{
+  children: React.ReactNode;
+}>;
+const TypedCommandItem = CommandItem as React.FC<{
+  onSelect: (value: string) => void;
+  children: React.ReactNode;
+}>;
 
 export const Products = () => {
   const navigate = useNavigate();
@@ -38,6 +62,12 @@ export const Products = () => {
   const [rentProduct] = useMutation(RENT_PRODUCT_MUTATION, {
     refetchQueries: [GET_PRODUCTS_QUERY],
   });
+  const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION, {
+    refetchQueries: [GET_PRODUCTS_QUERY],
+  });
+
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
     variables: {
@@ -62,16 +92,69 @@ export const Products = () => {
           id: productId,
           rentedTo: user.id,
         },
-      }).then(() => {
-        // You might want to add some user feedback here, like a toast notification
-        console.log("Product rented successfully");
-      }).catch((error) => {
-        console.error("Error renting product:", error);
-        // You might want to show an error message to the user here
-      });
+      })
+        .then(() => {
+          // You might want to add some user feedback here, like a toast notification
+          console.log("Product rented successfully");
+        })
+        .catch((error) => {
+          console.error("Error renting product:", error);
+          // You might want to show an error message to the user here
+        });
     } else {
       console.error("User not logged in");
       // You might want to redirect to login page or show a message to the user
+    }
+  };
+
+  const handleEditProduct = async (product: Product) => {
+    setEditingProduct({
+      ...product,
+      price: product.price || 0,
+      rent: product.rent || 0,
+    });
+    setIsEditModalOpen(true);
+    return Promise.resolve();
+  };
+
+  const handleUpdateProduct = () => {
+    if (editingProduct) {
+      const variables = {
+        id: Number(editingProduct.id),
+        input: {
+          name: editingProduct.name,
+          category: editingProduct.category,
+          price: Number(editingProduct.price),
+          rent: Number(editingProduct.rent),
+        },
+      };
+      console.log("Updating product with variables:", JSON.stringify(variables, null, 2));
+      updateProduct({
+        variables: variables,
+      })
+        .then((response) => {
+          console.log("Update product response:", JSON.stringify(response, null, 2));
+          console.log("Product updated successfully");
+          setIsEditModalOpen(false);
+          setEditingProduct(null);
+        })
+        .catch((error) => {
+          console.error("Error updating product:", error);
+          if (error.graphQLErrors) {
+            error.graphQLErrors.forEach((graphQLError: { message: string; extensions?: Record<string, unknown> }) => {
+              console.error("GraphQL error:", graphQLError.message);
+              if (graphQLError.extensions) {
+                console.error("Error extensions:", JSON.stringify(graphQLError.extensions, null, 2));
+              }
+            });
+          }
+          if (error.networkError) {
+            console.error("Network error:", error.networkError);
+            if (error.networkError.result) {
+              console.error("Network error result:", JSON.stringify(error.networkError.result, null, 2));
+            }
+          }
+        });
     }
   };
 
@@ -175,13 +258,108 @@ export const Products = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <ProductCard 
-            key={product.id} 
-            product={product} 
-            rentFn={() => rentAProductFn(product.id)}
+          <ProductCard
+            key={product.id}
+            product={product}
+            rentFn={() => rentAProductFn(Number(product.id))}
+            editFn={() => handleEditProduct(product)}
           />
         ))}
       </div>
+
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Product</DialogTitle>
+            <DialogDescription>
+              Make changes to your product here. Click save when you're done.
+            </DialogDescription>
+          </DialogHeader>
+          {editingProduct && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="name"
+                  value={editingProduct.name || ''}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      name: e.target.value,
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="category" className="text-right">
+                  Category
+                </Label>
+                <div className="col-span-3">
+                  <Select
+                    value={editingProduct.category || ''}
+                    onValueChange={(value) =>
+                      setEditingProduct({ ...editingProduct, category: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filterTypes.map((item) => (
+                        <SelectItem key={item.value} value={item.value}>
+                          {item.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="price" className="text-right">
+                  Price
+                </Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={editingProduct.price || 0}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      price: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="rent" className="text-right">
+                  Rent
+                </Label>
+                <Input
+                  id="rent"
+                  type="number"
+                  value={editingProduct.rent || 0}
+                  onChange={(e) =>
+                    setEditingProduct({
+                      ...editingProduct,
+                      rent: parseFloat(e.target.value) || 0,
+                    })
+                  }
+                  className="col-span-3"
+                />
+              </div>
+            </div>
+          )}
+          <DialogFooter>
+            <Button type="submit" onClick={handleUpdateProduct}>
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <div className="my-4 flex justify-between items-center">
         <p>
           Showing {(filters.page - 1) * filters.pageSize + 1} -{" "}

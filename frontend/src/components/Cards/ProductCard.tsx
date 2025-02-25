@@ -92,12 +92,9 @@ export const ProductCard = ({
   editFn?: () => Promise<void>;
 }) => {
   const navigate = useNavigate();
-
   const { user } = useAuth();
-  const ownedByYou = user?.id !== product.owner?.id ? true : false;
-  const isNotRented = product.rentedTo == 0 ? true : false;
-  console.log("x, y", user?.id.toString(), product.owner.id);
-  console.log("product", product.rentedTo);
+  const ownedByYou = user?.id === product.owner?.id;
+  const isNotRented = product.rentedTo === 0;
 
   return (
     <Card
@@ -119,7 +116,7 @@ export const ProductCard = ({
       </CardContent>
       <CardFooter className="flex justify-between">
         <div className="flex items-center gap-2">
-          {deleteFn && (
+          {ownedByYou && deleteFn && (
             <ActionButton
               onClick={deleteFn}
               alertProps={{
@@ -131,23 +128,18 @@ export const ProductCard = ({
               Delete
             </ActionButton>
           )}
-          {editFn && <ActionButton onClick={editFn}>Edit</ActionButton>}
-          {buyFn && <ActionButton onClick={buyFn}>Buy</ActionButton>}
-
-          {ownedByYou && isNotRented ? (
-            rentFn && <ActionButton onClick={rentFn}>Rent</ActionButton>
-          ) : (
+          {ownedByYou && editFn && <ActionButton onClick={editFn}>Edit</ActionButton>}
+          {!ownedByYou && buyFn && <ActionButton onClick={buyFn}>Buy</ActionButton>}
+          {!ownedByYou && isNotRented && rentFn && (
+            <ActionButton onClick={rentFn}>Rent</ActionButton>
+          )}
+          {(ownedByYou || !isNotRented) && (
             <Button size="sm" variant="secondary" disabled>
-              Unavailable
+              {ownedByYou ? "Your Product" : "Unavailable"}
             </Button>
           )}
-          {!ownedByYou && (
-            <div className="text-muted-secondary text-xs text-blue-400">
-              Owned by You
-            </div>
-          )}
         </div>
-        {releaseFn && (
+        {ownedByYou && releaseFn && (
           <ActionButton
             onClick={releaseFn}
             alertProps={{

@@ -112,12 +112,8 @@ export const GET_RENTED_PRODUCTS_QUERY = gql`
 `;
 
 export const UPDATE_PRODUCT_MUTATION = gql`
-  mutation UpdateProduct(
-    $id: Int!
-    $input: UpdateProductInput!
-    $release: Boolean
-  ) {
-    updateProduct(id: $id, input: $input, release: $release) {
+  mutation UpdateProduct($id: Int!, $input: UpdateProductInput!) {
+    updateProduct(id: $id, input: $input) {
       id
       name
       category
@@ -125,9 +121,6 @@ export const UPDATE_PRODUCT_MUTATION = gql`
       rent
       rentedTo
       updatedAt
-      error {
-        message
-      }
     }
   }
 `;
