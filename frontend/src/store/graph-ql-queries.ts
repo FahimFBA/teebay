@@ -7,6 +7,14 @@ export const GET_PRODUCTS_QUERY = gql`
         id
         name
         category
+        rentedTo
+        owner {
+          id
+          email
+          name
+          createdAt
+          updatedAt
+        }
         price
         rent
       }
@@ -104,7 +112,11 @@ export const GET_RENTED_PRODUCTS_QUERY = gql`
 `;
 
 export const UPDATE_PRODUCT_MUTATION = gql`
-  mutation UpdateProduct($id: Int!, $input: UpdateProductInput!, $release: Boolean) {
+  mutation UpdateProduct(
+    $id: Int!
+    $input: UpdateProductInput!
+    $release: Boolean
+  ) {
     updateProduct(id: $id, input: $input, release: $release) {
       id
       name

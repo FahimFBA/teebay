@@ -50,6 +50,8 @@ export const Products = () => {
   const totalCount = data?.products.totalCount || 0;
   const hasNextPage = data?.products.hasNextPage || false;
 
+  const rentAProductFn = ()=> {}
+
   return (
     <div className="container max-w-7xl mx-auto my-3">
       <div className="flex justify-between items-center mb-4">
@@ -150,7 +152,7 @@ export const Products = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} rentFn={rentAProductFn}/>
         ))}
       </div>
       <div className="my-4 flex justify-between items-center">

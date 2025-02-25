@@ -18,10 +18,14 @@ export interface IFilterState {
 
 export interface Product {
   id: string;
+  owner: IOwner;
   name: string;
-  category: string;
   price: number;
   rent: number;
+  rentedTo: number;
+  createdAt: string;
+  updatedAt: string;
+  category: string;
   productDescription: string;
 }
 
@@ -31,4 +35,12 @@ export interface ProductsData {
     totalCount: number;
     hasNextPage: boolean;
   };
+}
+
+export interface IOwner {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
 }

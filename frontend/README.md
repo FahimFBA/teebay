@@ -8,6 +8,7 @@
 * ✅ Read all products
 * ✅ Delete Product
 * Edit Product
+* Add product Description
 
 ## Purchase 
 
@@ -16,7 +17,12 @@
 ## Rent
 
 * Rent a product
-* Release a product
+* ✅ Release a product
+
+## UI 
+* Navbar with Auth Features
+* Edit profile
+* Debouncing
 
 Test user
 Id: 3

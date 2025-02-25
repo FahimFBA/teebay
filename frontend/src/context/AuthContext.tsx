@@ -3,7 +3,7 @@ import { makeVar, useReactiveVar, ApolloClient, InMemoryCache, gql, createHttpLi
 import { setContext } from '@apollo/client/link/context';
 
 interface User {
-  id: number;
+  id: number
   email: string;
   name: string;
   createdAt: string;
