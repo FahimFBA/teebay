@@ -166,3 +166,13 @@ export const RELEASE_PRODUCT_MUTATION = gql`
     }
   }
 `;
+
+export const RENT_PRODUCT_MUTATION = gql`
+  mutation RentProduct($id: Int!, $rentedTo: Int!) {
+    rentProduct(id: $id, rentedTo: $rentedTo) {
+      id
+      name
+      rentedTo
+    }
+  }
+`;
