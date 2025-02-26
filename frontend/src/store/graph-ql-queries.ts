@@ -169,3 +169,14 @@ export const RENT_PRODUCT_MUTATION = gql`
     }
   }
 `;
+
+export const UPDATE_USER_MUTATION = gql`
+  mutation UpdateUser($id: Int!, $input: UpdateUserInput!) {
+    updateUser(id: $id, input: $input) {
+      id
+      email
+      name
+      updatedAt
+    }
+  }
+`;

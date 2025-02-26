@@ -18,10 +18,10 @@
 
 * ✅ Rent a product
 * ✅ Release a product
+* optional: Toaster
 
 ## UI 
 * ✅ Navbar with Auth Features
-* Edit profile
 * Debouncing
 
 Test user
@@ -29,4 +29,5 @@ Id: 3
 email: newuser2@example.com
 total rented product: 37
 total owned products: 42
-password: newPassword123
+password: newPassword1234
+Name: Md. Fahim Bin Amin

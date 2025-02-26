@@ -63,10 +63,29 @@ export const logout = () => {
   client.resetStore();
 };
 
+export const updateUser = (updatedUser: User) => {
+  localStorage.setItem('user', JSON.stringify(updatedUser));
+  userVar(updatedUser);
+  client.writeQuery({
+    query: gql`
+      query GetUser {
+        user {
+          id
+          email
+          name
+          createdAt
+          updatedAt
+        }
+      }
+    `,
+    data: { user: updatedUser },
+  });
+};
+
 export const useAuth = () => {
   const isAuthenticated = useReactiveVar(isAuthenticatedVar);
   const user = useReactiveVar(userVar);
-  return { isAuthenticated, user, login, logout };
+  return { isAuthenticated, user, login, logout, updateUser };
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
