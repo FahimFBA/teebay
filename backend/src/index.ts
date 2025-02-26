@@ -52,7 +52,7 @@ async function startApolloServer() {
       logger.info(`Server is running on http://localhost:${PORT}${server.graphqlPath}`);
     });
 
-    // Graceful shutdown
+    // shutdown
     process.on('SIGTERM', () => {
       logger.info('SIGTERM signal received: closing HTTP server');
       httpServer.close(() => {

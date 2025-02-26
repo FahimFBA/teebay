@@ -94,16 +94,13 @@ export const Products = () => {
         },
       })
         .then(() => {
-          // You might want to add some user feedback here, like a toast notification
           console.log("Product rented successfully");
         })
         .catch((error) => {
           console.error("Error renting product:", error);
-          // You might want to show an error message to the user here
         });
     } else {
       console.error("User not logged in");
-      // You might want to redirect to login page or show a message to the user
     }
   };
 

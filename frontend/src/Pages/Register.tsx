@@ -22,7 +22,6 @@ export const Register = () => {
 
   const [register, { loading }] = useMutation(REGISTER_USER_QUERY, {
     onCompleted: () => {
-      // Redirect to login page after successful registration
       navigate("/login");
     },
     onError: (error) => {
