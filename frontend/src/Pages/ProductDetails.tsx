@@ -50,8 +50,6 @@ export const ProductDetails = () => {
 
   const handlePurchase = async () => {
     try {
-      // Assuming the current user's ID is 3 for this example
-      // In a real application, you would get this from the authenticated user's context
       const newOwnerId = 3;
 
       await changeProductOwner({

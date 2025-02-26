@@ -14,7 +14,7 @@ export const isAuthenticatedVar = makeVar<boolean>(!!localStorage.getItem('token
 export const userVar = makeVar<User | null>(JSON.parse(localStorage.getItem('user') || 'null'));
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:4000/graphql', // Replace with your GraphQL endpoint
+  uri: 'http://localhost:4000/graphql', 
 });
 
 const authLink = setContext((_, { headers }) => {

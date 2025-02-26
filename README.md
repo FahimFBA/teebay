@@ -12,6 +12,13 @@ Teebay is a full-stack web application for buying, selling, and renting products
   - [Installation](#installation)
   - [Database Schema](#database-schema)
   - [Usage](#usage)
+  - [Current Status](#current-status)
+    - [Product](#product)
+    - [Purchase](#purchase)
+    - [Rent](#rent)
+    - [UI](#ui)
+    - [Future Improvements](#future-improvements)
+  - [Test User](#test-user)
   - [API Documentation](#api-documentation)
   - [Contributing](#contributing)
   - [License](#license)
@@ -91,6 +98,12 @@ Before you begin, ensure you have met the following requirements:
 
 9. Access the application in your web browser at `http://localhost:5173` (or the port specified by Vite).
 
+10. (Optional) To view and manage your database using Prisma Studio:
+    ```
+    npx prisma studio
+    ```
+    This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`.
+
 ## Database Schema
 
 ```mermaid
@@ -125,6 +138,43 @@ erDiagram
 3. Click on a product to view details, buy, or rent.
 4. To sell a product, click on "Add Product" and fill in the required information.
 5. Manage your products and rentals from your user profile.
+
+## Current Status
+
+### Product
+- ✅ Add Product
+- ✅ Read 1 product 
+- ✅ Read all products
+- ✅ Delete Product
+- ✅ Edit Product
+- Add product Description (In progress)
+
+### Purchase 
+- ✅ Purchase a product
+
+### Rent
+- ✅ Rent a product
+- ✅ Release a product
+
+### UI 
+- ✅ Navbar with Auth Features
+- ✅ Debouncing
+
+### Future Improvements
+- Implement toaster notifications for better user feedback
+
+## Test User
+
+For testing purposes, you can use the following test user credentials:
+
+- ID: 3
+- Email: newuser2@example.com
+- Password: newPassword1234
+- Name: Md. Fahim Bin Amin
+- Total rented products: 32
+- Total owned products: 48
+
+Please note that this information is for development and testing purposes only. Do not use these credentials in a production environment.
 
 ## API Documentation
 
