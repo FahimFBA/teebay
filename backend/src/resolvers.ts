@@ -262,6 +262,22 @@ const resolvers: IResolvers = {
         throw new Error("Failed to rent product");
       }
     },
+    changeProductOwner: async (
+      _: any,
+      { id, newOwnerId }: { id: number; newOwnerId: number }
+    ) => {
+      try {
+        const updatedProduct = await prisma.product.update({
+          where: { id },
+          data: { ownerId: newOwnerId },
+          include: { owner: true },
+        });
+        return updatedProduct;
+      } catch (error) {
+        console.error(`Error changing owner for product with id ${id}:`, error);
+        throw new Error("Failed to change product owner");
+      }
+    },
   },
   User: {
     products: async (parent: User) => {

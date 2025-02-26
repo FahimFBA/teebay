@@ -80,7 +80,7 @@ type Query {
   rentedProducts(rentedTo: Int!): [Product!]!
   }
 
-  type Mutation {
+type Mutation {
     login(email: String!, password: String!): AuthPayload!
     createUser(input: CreateUserInput!): User!
     updateUser(id: Int!, input: UpdateUserInput!): User!
@@ -88,6 +88,7 @@ type Query {
     updateProduct(id: Int!, input: UpdateProductInput!): Product!
     deleteProduct(id: Int!): Product!
     rentProduct(id: Int!, rentedTo: Int!): Product!
+    changeProductOwner(id: Int!, newOwnerId: Int!): Product!
   }
 
   type AuthPayload {
