@@ -70,15 +70,40 @@ Before you begin, ensure you have met the following requirements:
      DATABASE_URL="postgresql://username:password@localhost:5432/teebay_db"
      ```
 
-4. Run database migrations:
+4. Set up the database and generate Prisma client:
    ```
-   npx prisma migrate deploy
+   npx prisma generate
+   npx prisma migrate dev --name init
    ```
+
+   These commands do the following:
+   - `npx prisma generate`: Generates the Prisma client based on your schema
+   - `npx prisma migrate dev --name init`: Creates and applies a new migration based on your current schema
+
+   If you encounter any issues, try the following steps:
+
+   a. Reset the database (this will delete all data):
+      ```
+      npx prisma migrate reset
+      ```
+
+   b. If the reset doesn't work, manually delete the `prisma/migrations` folder:
+      ```
+      rm -rf prisma/migrations
+      ```
+      (On Windows, use `rmdir /s /q prisma\migrations`)
+
+   c. Then run the migration command again:
+      ```
+      npx prisma migrate dev --name init
+      ```
 
 5. Seed the database with initial data:
    ```
-   npm run seed
+   npx prisma db seed
    ```
+
+   If you encounter any issues with undefined DATABASE_URL, make sure your .env file is properly set up and the DATABASE_URL is correct.
 
 6. Start the backend server:
    ```
@@ -87,8 +112,8 @@ Before you begin, ensure you have met the following requirements:
 
 7. In a new terminal, install frontend dependencies:
    ```
-   cd ../frontend
-   npm install
+   cd frontend
+   npm install --force
    ```
 
 8. Start the frontend development server:
@@ -100,6 +125,7 @@ Before you begin, ensure you have met the following requirements:
 
 10. (Optional) To view and manage your database using Prisma Studio:
     ```
+    cd backend
     npx prisma studio
     ```
     This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`.
