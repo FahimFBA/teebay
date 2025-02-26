@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
   SelectItem,
+  SelectContent
 } from "@/components/ui";
 import { useQuery, useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
@@ -33,6 +34,7 @@ import {
   GET_PRODUCTS_QUERY,
   RENT_PRODUCT_MUTATION,
   UPDATE_PRODUCT_MUTATION,
+  CHANGE_PRODUCT_OWNER_MUTATION,
 } from "@/store";
 import { IFilterState, ProductsData, Product } from "@/Types";
 import { filterTypes } from "@/constants";
@@ -65,6 +67,9 @@ export const Products = () => {
     refetchQueries: [GET_PRODUCTS_QUERY],
   });
   const [updateProduct] = useMutation(UPDATE_PRODUCT_MUTATION, {
+    refetchQueries: [GET_PRODUCTS_QUERY],
+  });
+  const [changeProductOwner] = useMutation(CHANGE_PRODUCT_OWNER_MUTATION, {
     refetchQueries: [GET_PRODUCTS_QUERY],
   });
 
@@ -128,6 +133,25 @@ export const Products = () => {
         })
         .catch((error) => {
           console.error("Error renting product:", error);
+        });
+    } else {
+      console.error("User not logged in");
+    }
+  };
+
+  const buyProductFn = (productId: number) => {
+    if (user) {
+      changeProductOwner({
+        variables: {
+          id: productId,
+          newOwnerId: user.id,
+        },
+      })
+        .then(() => {
+          console.log("Product purchased successfully");
+        })
+        .catch((error) => {
+          console.error("Error purchasing product:", error);
         });
     } else {
       console.error("User not logged in");
@@ -290,6 +314,7 @@ export const Products = () => {
             key={product.id}
             product={product}
             rentFn={() => rentAProductFn(Number(product.id))}
+            buyFn={() => buyProductFn(Number(product.id))}
             editFn={() => handleEditProduct(product)}
           />
         ))}
@@ -335,19 +360,19 @@ export const Products = () => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <div>
+                    <SelectContent>
                       {filterTypes.map((item) => (
                         <SelectItem key={item.value} value={item.value}>
                           {item.label}
                         </SelectItem>
                       ))}
-                    </div>
+                    </SelectContent>
                   </Select>
                 </div>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="price" className="text-right">
-                  Pricdiv
+                  Price
                 </Label>
                 <Input
                   id="price"
@@ -364,7 +389,7 @@ export const Products = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="rent" className="text-right">
-                  Rdiv
+                  Rent
                 </Label>
                 <Input
                   id="rent"
@@ -383,7 +408,7 @@ export const Products = () => {
           )}
           <DialogFooter>
             <Button type="submit" onClick={handleUpdateProduct}>
-              Save chaDialogFooterges
+              Save changes
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -405,7 +430,7 @@ export const Products = () => {
             disabled={filters.page === 1}
             className="mr-2"
           >
-            Previodiv
+            Previous
           </Button>
           <Button
             onClick={() =>

@@ -28,7 +28,7 @@ interface AlertProps {
 }
 
 interface ActionButtonProps {
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   children: ReactNode;
   alertProps?: AlertProps;
 }
@@ -52,7 +52,7 @@ const ActionButton = ({ onClick, children, alertProps }: ActionButtonProps) => {
             <AlertDialogAction
               onClick={(e) => {
                 e.stopPropagation();
-                onClick();
+                onClick(e);
               }}
             >
               Continue
@@ -68,7 +68,7 @@ const ActionButton = ({ onClick, children, alertProps }: ActionButtonProps) => {
       size="sm"
       onClick={(e) => {
         e.stopPropagation();
-        onClick();
+        onClick(e);
       }}
     >
       {children}
@@ -89,14 +89,21 @@ export const ProductCard = ({
   releaseFn?: () => void;
   buyFn?: () => void;
   deleteFn?: () => void;
-  editFn?: () => Promise<void>;
+  editFn?: (e: React.MouseEvent<HTMLButtonElement>) => Promise<void>;
 }) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const ownedByYou = user?.id === product.owner?.id;
+  const ownedByYou = user?.id === Number(product.owner?.id);
   const isNotRented = product.rentedTo === 0;
 
-  console.log(ownedByYou, user?.id, product.owner?.id);
+  console.log(
+    "ownedByYou:",
+    ownedByYou,
+    "user?.id:",
+    user?.id,
+    "product.owner?.id:",
+    product.owner?.id
+  );
 
   return (
     <Card
@@ -120,7 +127,10 @@ export const ProductCard = ({
         <div className="flex items-center gap-2">
           {ownedByYou && deleteFn && (
             <ActionButton
-              onClick={deleteFn}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteFn();
+              }}
               alertProps={{
                 title: "Are you sure you want to delete this product?",
                 description:
@@ -131,13 +141,30 @@ export const ProductCard = ({
             </ActionButton>
           )}
           {ownedByYou && editFn && (
-            <ActionButton onClick={editFn}>Edit</ActionButton>
+            <ActionButton
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                e?.stopPropagation();
+                editFn(e);
+              }}
+            >
+              Edit
+            </ActionButton>
           )}
           {!ownedByYou && buyFn && (
-            <ActionButton onClick={buyFn}>Buy</ActionButton>
+            <ActionButton onClick={(e) => {
+              e.stopPropagation();
+              buyFn();
+            }}>
+              Buy
+            </ActionButton>
           )}
           {rentFn && !ownedByYou && isNotRented && (
-            <ActionButton onClick={rentFn}>Rent</ActionButton>
+            <ActionButton onClick={(e) => {
+              e.stopPropagation();
+              rentFn();
+            }}>
+              Rent
+            </ActionButton>
           )}
           {(ownedByYou || !isNotRented) && rentFn && (
             <Button size="sm" variant="secondary" disabled>
@@ -147,7 +174,10 @@ export const ProductCard = ({
         </div>
         {releaseFn && (
           <ActionButton
-            onClick={releaseFn}
+            onClick={(e) => {
+              e.stopPropagation();
+              releaseFn();
+            }}
             alertProps={{
               title: "Are you sure you want to release this product?",
               description:

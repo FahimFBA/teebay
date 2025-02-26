@@ -180,3 +180,21 @@ export const UPDATE_USER_MUTATION = gql`
     }
   }
 `;
+
+export const CHANGE_PRODUCT_OWNER_MUTATION = gql`
+  mutation ChangeProductOwner($id: Int!, $newOwnerId: Int!) {
+    changeProductOwner(id: $id, newOwnerId: $newOwnerId) {
+      id
+      name
+      category
+      price
+      rent
+      owner {
+        id
+        name
+        email
+      }
+      updatedAt
+    }
+  }
+`;

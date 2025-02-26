@@ -1,6 +1,9 @@
 import { useParams } from "react-router-dom";
-import { useQuery, useMutation, gql } from "@apollo/client";
-import { GET_PRODUCT_DETAILS_QUERY } from "@/store";
+import { useQuery, useMutation } from "@apollo/client";
+import {
+  GET_PRODUCT_DETAILS_QUERY,
+  CHANGE_PRODUCT_OWNER_MUTATION,
+} from "@/store";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
 import { Button } from "@/components/ui/button";
@@ -19,24 +22,6 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 dayjs.extend(advancedFormat);
-
-const CHANGE_PRODUCT_OWNER_MUTATION = gql`
-  mutation ChangeProductOwner($id: Int!, $newOwnerId: Int!) {
-    changeProductOwner(id: $id, newOwnerId: $newOwnerId) {
-      id
-      name
-      category
-      price
-      rent
-      owner {
-        id
-        name
-        email
-      }
-      updatedAt
-    }
-  }
-`;
 
 export const ProductDetails = () => {
   const { id } = useParams();
