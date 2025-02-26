@@ -1,168 +1,178 @@
-# Teebay
+# Teebay Project
 
-Teebay is a full-stack web application that combines a GraphQL API backend with a React frontend. It's designed to facilitate the buying, selling, and renting of products between users. The platform allows users to create accounts, list products for sale or rent, and manage their transactions.
+Teebay is a full-stack web application for buying, selling, and renting products. This project uses a React frontend with a Node.js backend, GraphQL API, and PostgreSQL database.
 
-## Technologies Used
+## Table of Contents
 
-### Backend
-- Node.js
-- Express
-- TypeScript
-- Apollo Server (GraphQL)
-- Prisma (ORM)
-- PostgreSQL
-- JSON Web Tokens (JWT) for authentication
-- bcrypt for password hashing
-- Winston for logging
-
-### Frontend
-- React
-- TypeScript
-- Vite (build tool)
-- Apollo Client (for GraphQL integration)
-- React Router
-- Tailwind CSS
-- Radix UI (for accessible component primitives)
-
-## Project Structure
-
-The project is divided into two main directories:
-
-- `backend/`: Contains the GraphQL API server
-  - `src/`: Source files for the backend
-    - `index.ts`: Entry point of the server
-    - `schema.ts`: GraphQL schema definition
-    - `resolvers.ts`: GraphQL resolvers
-  - `prisma/`: Prisma ORM files
-    - `schema.prisma`: Database schema definition
-  - `.env.example`: Example environment variables for the backend
-
-- `frontend/`: Contains the React application
-  - `src/`: Source files for the frontend
-    - `components/`: Reusable React components
-    - `Pages/`: React components for different routes
-    - `store/`: State management files (e.g., GraphQL queries)
-    - `context/`: React context files (e.g., AuthContext)
-    - `App.tsx`: Main application component
-  - `vite.config.ts`: Vite build tool configuration
-  - `.env.example`: Example environment variables for the frontend
-
-Key configuration files:
-- `tsconfig.json`: TypeScript configuration for both backend and frontend
-- `package.json`: Project dependencies and scripts for both backend and frontend
-- `components.json`: (Frontend) Possibly contains component configurations
-
-## Setup and Installation
-
-### Prerequisites
-- Node.js (v14 or later)
-- npm (v6 or later)
-- PostgreSQL
-
-### Backend Setup
-1. Navigate to the backend directory:
-   ```
-   cd backend
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Create a `.env` file based on `.env.example` and update the database connection string and other environment variables.
-4. Run Prisma migrations:
-   ```
-   npx prisma migrate dev
-   ```
-5. Generate Prisma client:
-   ```
-   npx prisma generate
-   ```
-
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```
-   cd frontend
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Create a `.env` file based on `.env.example` and update any necessary environment variables.
-
-## Running the Application
-
-### Backend
-In the `backend` directory:
-- For development: `npm run dev`
-- For production: `npm start`
-
-The GraphQL server will start on `http://localhost:4000` (or the port specified in your `.env` file).
-
-### Frontend
-In the `frontend` directory:
-- For development: `npm run dev`
-- For production build: `npm run build`
-
-The development server will start on `http://localhost:5173`.
+- [Teebay Project](#teebay-project)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Tech Stack](#tech-stack)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Database Schema](#database-schema)
+  - [Usage](#usage)
+  - [API Documentation](#api-documentation)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 ## Features
 
-- User authentication and authorization
+- User authentication (register, login, logout)
+- Product management (create, read, update, delete)
+- Buy and sell products
+- Rent products
 - User profile management
-- Product listing creation and management
-- Product search with filtering options
-- Product rental system
-- Pagination for users and products listings
+- Responsive design for mobile and desktop
+
+## Tech Stack
+
+- Frontend: React, TypeScript, Vite, Tailwind CSS
+- Backend: Node.js, Express, TypeScript
+- API: GraphQL with Apollo Server
+- Database: PostgreSQL with Prisma ORM
+- Authentication: JSON Web Tokens (JWT)
+
+## Prerequisites
+
+Before you begin, ensure you have met the following requirements:
+
+- Node.js (v14 or later)
+- npm (v6 or later)
+- PostgreSQL (v12 or later)
+- Git
+
+## Installation
+
+1. Clone the repository:
+   ```
+   git clone https://github.com/FahimFBA/teebay.git
+   cd teebay
+   ```
+
+2. Install backend dependencies:
+   ```
+   cd backend
+   npm install
+   ```
+
+3. Set up the database:
+   - Create a new PostgreSQL database for the project.
+   - Copy the `.env.example` file to `.env` and update the `DATABASE_URL` with your database credentials:
+     ```
+     DATABASE_URL="postgresql://username:password@localhost:5432/teebay_db"
+     ```
+
+4. Run database migrations:
+   ```
+   npx prisma migrate deploy
+   ```
+
+5. Seed the database with initial data:
+   ```
+   npm run seed
+   ```
+
+6. Start the backend server:
+   ```
+   npm run dev
+   ```
+
+7. In a new terminal, install frontend dependencies:
+   ```
+   cd ../frontend
+   npm install
+   ```
+
+8. Start the frontend development server:
+   ```
+   npm run dev
+   ```
+
+9. Access the application in your web browser at `http://localhost:5173` (or the port specified by Vite).
+
+## Database Schema
+
+```mermaid
+erDiagram
+    User {
+        int id PK
+        string email
+        string password
+        string name
+        datetime createdAt
+        datetime updatedAt
+    }
+    Product {
+        int id PK
+        int ownerId FK
+        string name
+        string category
+        float price
+        float rent
+        int rentedTo FK
+        datetime createdAt
+        datetime updatedAt
+    }
+    User ||--o{ Product : owns
+    User ||--o{ Product : rents
+```
+
+## Usage
+
+1. Register a new account or log in with existing credentials.
+2. Browse available products on the home page.
+3. Click on a product to view details, buy, or rent.
+4. To sell a product, click on "Add Product" and fill in the required information.
+5. Manage your products and rentals from your user profile.
 
 ## API Documentation
 
-The backend uses GraphQL. Here's a brief overview of the main queries and mutations:
+The GraphQL API is available at `http://localhost:4000/graphql`. You can use GraphQL Playground to explore and test the API.
 
-### Queries
-- `users`: Fetch paginated list of users
-- `user`: Fetch a single user by ID
-- `products`: Fetch paginated list of products with optional filters
-- `product`: Fetch a single product by ID
-- `rentedProducts`: Fetch products rented by a specific user
+Some example queries and mutations:
 
-### Mutations
-- `login`: Authenticate a user and receive a JWT token
-- `createUser`: Register a new user
-- `updateUser`: Update user profile information
-- `createProduct`: Create a new product listing
-- `updateProduct`: Update an existing product listing
-- `deleteProduct`: Remove a product listing
-- `rentProduct`: Rent a product to a user
+```graphql
+# Get all products
+query {
+  products {
+    id
+    name
+    category
+    price
+    rent
+  }
+}
 
-For full API documentation, run the backend server and visit the GraphQL Playground at `http://localhost:4000/graphql`.
+# Create a new product
+mutation {
+  createProduct(input: {
+    name: "Example Product"
+    category: "ELECTRONICS"
+    price: 99.99
+    rent: 9.99
+  }) {
+    id
+    name
+    category
+    price
+    rent
+  }
+}
+```
 
-## Frontend Routes
-
-Based on the API structure, the frontend likely includes the following routes:
-
-- `/`: Home page with product listings
-- `/login`: User login page
-- `/register`: User registration page
-- `/profile`: User profile page
-- `/products/new`: Create new product listing
-- `/products/:id`: View product details
-- `/products/:id/edit`: Edit product listing
-- `/my-products`: User's product listings
-- `/rented-products`: Products rented by the user
-
-
+For a full list of available queries and mutations, refer to the schema in GraphQL Playground.
 
 ## Contributing
 
-Contributions to Teebay are welcome! Here are some guidelines:
+Contributions to the Teebay project are welcome. Please follow these steps to contribute:
 
 1. Fork the repository
 2. Create a new branch: `git checkout -b feature-branch-name`
 3. Make your changes and commit them: `git commit -m 'Add some feature'`
 4. Push to the branch: `git push origin feature-branch-name`
-5. Submit a pull request
-
+5. Create a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

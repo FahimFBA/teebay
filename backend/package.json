@@ -6,7 +6,8 @@
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "nodemon --exec ts-node src/index.ts",
-    "build": "tsc -p ."
+    "build": "tsc -p .",
+    "seed": "ts-node prisma/seed.ts > prisma/seed-data.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +21,6 @@
     "@types/graphql": "^14.2.3",
     "@types/helmet": "^0.0.48",
     "@types/jsonwebtoken": "^9.0.8",
-    "@types/node": "^16.11.12",
     "apollo-server-express": "^3.13.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
@@ -36,6 +36,7 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
+    "@types/node": "^22.13.5",
     "ts-node": "^10.9.2"
   }
 }
