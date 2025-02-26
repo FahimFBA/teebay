@@ -20,11 +20,10 @@ import {
   Select,
   SelectTrigger,
   SelectValue,
-  SelectContent,
   SelectItem,
 } from "@/components/ui";
 import { useQuery, useMutation } from "@apollo/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
@@ -57,6 +56,9 @@ const TypedCommandItem = CommandItem as React.FC<{
 
 export const Products = () => {
   const navigate = useNavigate();
+  const [debounce1, setDebounce1] = useState<number>(0);
+  const [debounce2, setDebounce2] = useState<number>(0);
+
   const [filters, setFilters] = useState<IFilterState>(initialFiltersState);
   const { user } = useAuth();
   const [rentProduct] = useMutation(RENT_PRODUCT_MUTATION, {
@@ -68,6 +70,34 @@ export const Products = () => {
 
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        condition: {
+          ...prevFilters.condition,
+          minPrice: debounce1 || 0,
+        },
+      }));
+    }, 2200);
+
+    return () => clearTimeout(timer);
+  }, [debounce1]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFilters((prevFilters) => ({
+        ...prevFilters,
+        condition: {
+          ...prevFilters.condition,
+          maxPrice: debounce2 || 0,
+        },
+      }));
+    }, 2200);
+
+    return () => clearTimeout(timer);
+  }, [debounce2]);
 
   const { loading, error, data } = useQuery<ProductsData>(GET_PRODUCTS_QUERY, {
     variables: {
@@ -125,12 +155,18 @@ export const Products = () => {
           rent: Number(editingProduct.rent),
         },
       };
-      console.log("Updating product with variables:", JSON.stringify(variables, null, 2));
+      console.log(
+        "Updating product with variables:",
+        JSON.stringify(variables, null, 2)
+      );
       updateProduct({
         variables: variables,
       })
         .then((response) => {
-          console.log("Update product response:", JSON.stringify(response, null, 2));
+          console.log(
+            "Update product response:",
+            JSON.stringify(response, null, 2)
+          );
           console.log("Product updated successfully");
           setIsEditModalOpen(false);
           setEditingProduct(null);
@@ -138,17 +174,28 @@ export const Products = () => {
         .catch((error) => {
           console.error("Error updating product:", error);
           if (error.graphQLErrors) {
-            error.graphQLErrors.forEach((graphQLError: { message: string; extensions?: Record<string, unknown> }) => {
-              console.error("GraphQL error:", graphQLError.message);
-              if (graphQLError.extensions) {
-                console.error("Error extensions:", JSON.stringify(graphQLError.extensions, null, 2));
+            error.graphQLErrors.forEach(
+              (graphQLError: {
+                message: string;
+                extensions?: Record<string, unknown>;
+              }) => {
+                console.error("GraphQL error:", graphQLError.message);
+                if (graphQLError.extensions) {
+                  console.error(
+                    "Error extensions:",
+                    JSON.stringify(graphQLError.extensions, null, 2)
+                  );
+                }
               }
-            });
+            );
           }
           if (error.networkError) {
             console.error("Network error:", error.networkError);
             if (error.networkError.result) {
-              console.error("Network error result:", JSON.stringify(error.networkError.result, null, 2));
+              console.error(
+                "Network error result:",
+                JSON.stringify(error.networkError.result, null, 2)
+              );
             }
           }
         });
@@ -222,34 +269,18 @@ export const Products = () => {
         <Input
           type="number"
           name="minPrice"
-          value={filters.condition.minPrice}
+          value={debounce1}
           placeholder="min price"
           className="w-[150px]"
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              condition: {
-                ...filters.condition,
-                minPrice: Number(e.target.value) || 0,
-              },
-            })
-          }
+          onChange={(e) => setDebounce1(+e.target.value)}
         />
         <Input
           type="number"
           name="maxPrice"
-          value={filters.condition.maxPrice}
+          value={debounce2}
           placeholder="max price"
           className="w-[150px]"
-          onChange={(e) =>
-            setFilters({
-              ...filters,
-              condition: {
-                ...filters.condition,
-                maxPrice: Number(e.target.value) || 0,
-              },
-            })
-          }
+          onChange={(e) => setDebounce2(+e.target.value)}
         />
       </div>
 
@@ -280,7 +311,7 @@ export const Products = () => {
                 </Label>
                 <Input
                   id="name"
-                  value={editingProduct.name || ''}
+                  value={editingProduct.name || ""}
                   onChange={(e) =>
                     setEditingProduct({
                       ...editingProduct,
@@ -296,7 +327,7 @@ export const Products = () => {
                 </Label>
                 <div className="col-span-3">
                   <Select
-                    value={editingProduct.category || ''}
+                    value={editingProduct.category || ""}
                     onValueChange={(value) =>
                       setEditingProduct({ ...editingProduct, category: value })
                     }
@@ -304,19 +335,19 @@ export const Products = () => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <div>
                       {filterTypes.map((item) => (
                         <SelectItem key={item.value} value={item.value}>
                           {item.label}
                         </SelectItem>
                       ))}
-                    </SelectContent>
+                    </div>
                   </Select>
                 </div>
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="price" className="text-right">
-                  Price
+                  Pricdiv
                 </Label>
                 <Input
                   id="price"
@@ -333,7 +364,7 @@ export const Products = () => {
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="rent" className="text-right">
-                  Rent
+                  Rdiv
                 </Label>
                 <Input
                   id="rent"
@@ -352,7 +383,7 @@ export const Products = () => {
           )}
           <DialogFooter>
             <Button type="submit" onClick={handleUpdateProduct}>
-              Save changes
+              Save chaDialogFooterges
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -374,7 +405,7 @@ export const Products = () => {
             disabled={filters.page === 1}
             className="mr-2"
           >
-            Previous
+            Previodiv
           </Button>
           <Button
             onClick={() =>
