@@ -12,7 +12,7 @@
 
 ## Purchase 
 
-* Purcase a product
+* ✅ Purcase a product
 
 ## Rent
 
@@ -22,7 +22,7 @@
 
 ## UI 
 * ✅ Navbar with Auth Features
-* Debouncing
+* ✅ Debouncing
 
 Test user
 Id: 3

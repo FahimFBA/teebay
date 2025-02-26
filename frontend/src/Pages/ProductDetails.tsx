@@ -16,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 dayjs.extend(advancedFormat);
 
@@ -40,9 +41,14 @@ const CHANGE_PRODUCT_OWNER_MUTATION = gql`
 export const ProductDetails = () => {
   const { id } = useParams();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const { loading, error, data, refetch } = useQuery(GET_PRODUCT_DETAILS_QUERY, {
-    variables: { id: parseInt(id || "0", 10) },
-  });
+  const { loading, error, data, refetch } = useQuery(
+    GET_PRODUCT_DETAILS_QUERY,
+    {
+      variables: { id: parseInt(id || "0", 10) },
+    }
+  );
+
+  const { user } = useAuth();
 
   const [changeProductOwner] = useMutation(CHANGE_PRODUCT_OWNER_MUTATION);
 
@@ -80,6 +86,8 @@ export const ProductDetails = () => {
     }
   };
 
+  console.log("product.owner.id", product.owner.id);
+
   return (
     <div className="container max-w-7xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
@@ -105,7 +113,9 @@ export const ProductDetails = () => {
           </p>
           <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
             <AlertDialogTrigger asChild>
-              <Button className="mt-4">Purchase Product</Button>
+              {user?.id !== product.owner.id && (
+                <Button className="mt-4">Purchase Product</Button>
+              )}
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -116,7 +126,9 @@ export const ProductDetails = () => {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handlePurchase}>Continue</AlertDialogAction>
+                <AlertDialogAction onClick={handlePurchase}>
+                  Continue
+                </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
           </AlertDialog>
