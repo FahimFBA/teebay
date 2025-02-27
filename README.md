@@ -100,7 +100,7 @@ Before you begin, ensure you have met the following requirements:
 
 7. In a new terminal, install frontend dependencies:
    ```
-   cd ../frontend
+   cd frontend
    npm install --force
    ```
 
