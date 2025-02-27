@@ -37,6 +37,7 @@ Teebay is a full-stack web application for buying, selling, and renting products
     - [9. Create New Product Page Contd.](#9-create-new-product-page-contd)
     - [10. Product Deletion Page](#10-product-deletion-page)
     - [11. User Settings Page](#11-user-settings-page)
+    - [12. Buy A Product](#12-buy-a-product)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -370,6 +371,9 @@ Here are some screenshots of the Teebay project in action:
 
 ### 11. User Settings Page
 ![User Settings Page](img/11.png)
+
+### 12. Buy A Product
+![Buy A Product](https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f)
 
 These screenshots provide a visual overview of the key features and interfaces of the Teebay project.
 
