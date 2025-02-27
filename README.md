@@ -1,7 +1,5 @@
 # Teebay Project
 
-![CI/CD](https://github.com/FahimFBA/teebay/actions/workflows/ci-cd.yml/badge.svg)
-
 Teebay is a full-stack web application for buying, selling, and renting products. This project uses a React frontend with a Node.js backend, GraphQL API, and PostgreSQL database.
 
 ## Table of Contents
@@ -27,7 +25,6 @@ Teebay is a full-stack web application for buying, selling, and renting products
     - [Future Improvements](#future-improvements)
   - [Test User](#test-user)
   - [API Documentation](#api-documentation)
-  - [CI/CD Pipeline](#cicd-pipeline)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -324,51 +321,6 @@ mutation {
 ```
 
 For a full list of available queries and mutations, refer to the schema in GraphQL Playground.
-
-## CI/CD Pipeline
-
-This project uses GitHub Actions for Continuous Integration and Continuous Deployment (CI/CD). The pipeline is configured to run on every push to the main branch and on pull requests targeting the main branch.
-
-The CI/CD pipeline consists of the following steps:
-
-1. **Linting and Formatting**
-   - Runs ESLint to check for code quality issues in both frontend and backend code.
-   - Checks if the code adheres to Prettier formatting rules.
-
-2. **Building**
-   - Installs dependencies for both frontend and backend.
-   - Builds the project to ensure there are no compilation errors.
-
-3. **Testing**
-   - Runs the test suites for both frontend and backend.
-
-To view the detailed configuration, check the `.github/workflows/ci-cd.yml` file in the repository.
-
-### Running CI/CD Checks Locally
-
-To run the same checks locally before pushing your changes:
-
-1. Linting:
-   ```
-   cd backend && npm run lint && cd ../frontend && npm run lint
-   ```
-
-2. Formatting:
-   ```
-   cd backend && npm run format:check && cd ../frontend && npm run format:check
-   ```
-
-3. Building:
-   ```
-   cd backend && npm run build && cd ../frontend && npm run build
-   ```
-
-4. Testing:
-   ```
-   cd backend && npm test && cd ../frontend && npm test
-   ```
-
-By running these checks locally, you can catch and fix issues before pushing your changes, ensuring a smoother CI/CD process.
 
 ## Contributing
 
