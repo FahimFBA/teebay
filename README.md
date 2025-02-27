@@ -38,6 +38,11 @@ Teebay is a full-stack web application for buying, selling, and renting products
     - [10. Product Deletion Page](#10-product-deletion-page)
     - [11. User Settings Page](#11-user-settings-page)
     - [12. Buy A Product](#12-buy-a-product)
+    - [13. Create A New Product](#13-create-a-new-product)
+    - [14. Delete A Product](#14-delete-a-product)
+    - [15. Edit A Owned Product](#15-edit-a-owned-product)
+    - [16. Release A Rented Product](#16-release-a-rented-product)
+    - [17. Rent A Product](#17-rent-a-product)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -374,6 +379,21 @@ Here are some screenshots of the Teebay project in action:
 
 ### 12. Buy A Product
 [https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f](https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f)
+
+### 13. Create A New Product
+[https://github.com/user-attachments/assets/45daadd7-aacf-4182-9080-a912ac11437f](https://github.com/user-attachments/assets/45daadd7-aacf-4182-9080-a912ac11437f)
+
+### 14. Delete A Product
+[https://github.com/user-attachments/assets/2cdb3e73-67e0-40b3-8f28-304d7ffcd6a9](https://github.com/user-attachments/assets/2cdb3e73-67e0-40b3-8f28-304d7ffcd6a9)
+
+### 15. Edit A Owned Product
+[https://github.com/user-attachments/assets/debce999-7082-419b-b863-c6d91554e003](https://github.com/user-attachments/assets/debce999-7082-419b-b863-c6d91554e003)
+
+### 16. Release A Rented Product
+[https://github.com/user-attachments/assets/c1cddf43-efbe-4650-8878-9db6111ec5cd](https://github.com/user-attachments/assets/c1cddf43-efbe-4650-8878-9db6111ec5cd)
+
+### 17. Rent A Product
+[https://github.com/user-attachments/assets/75b1379a-c7fd-4272-a5f7-2013123c0869](https://github.com/user-attachments/assets/75b1379a-c7fd-4272-a5f7-2013123c0869)
 
 These screenshots provide a visual overview of the key features and interfaces of the Teebay project.
 
