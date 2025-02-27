@@ -82,6 +82,8 @@ Before you begin, ensure you have met the following requirements:
 
    IMPORTANT: Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
 
+   After running these commands, you should see a message indicating that all migrations have been applied successfully, including one named "reset_product_sequence". This migration is crucial for preventing ID conflicts when creating new products.
+
    If you encounter any issues, try the following steps:
 
    a. Reset the database (this will delete all data):
@@ -100,7 +102,36 @@ Before you begin, ensure you have met the following requirements:
       npx prisma migrate dev
       ```
 
-   NOTE: If you encounter issues with product creation due to ID conflicts, ensure you've run all migrations, including the one that resets the Product table's auto-increment sequence.
+   If you're still encountering issues after these steps, please refer to the Troubleshooting section below.
+
+## Troubleshooting
+
+### Product Creation Issues
+
+If you're experiencing problems creating new products, such as ID conflicts, follow these steps:
+
+1. Ensure you've run all migrations, especially the one that resets the Product table's auto-increment sequence:
+   ```
+   npx prisma migrate dev
+   ```
+
+2. If the issue persists, try resetting the database:
+   ```
+   npx prisma migrate reset
+   ```
+
+3. After resetting, run the migrations again:
+   ```
+   npx prisma migrate dev
+   ```
+
+4. If you're still encountering problems, check your database directly using Prisma Studio:
+   ```
+   npx prisma studio
+   ```
+   Look at the Product table and verify that the ID sequence is correct.
+
+5. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
 
 5. Seed the database with initial data:
    ```
