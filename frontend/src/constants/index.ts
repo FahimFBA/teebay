@@ -9,7 +9,7 @@ export const filterTypes = [
   },
   {
     value: "HOMEAPPLIANCES",
-    label: "HOME APPLIANCES",
+    label: "HOMEAPPLIANCES",
   },
   {
     value: "SPORTING GOODS",
