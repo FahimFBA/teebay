@@ -25,6 +25,18 @@ Teebay is a full-stack web application for buying, selling, and renting products
     - [Future Improvements](#future-improvements)
   - [Test User](#test-user)
   - [API Documentation](#api-documentation)
+  - [Screenshots](#screenshots)
+    - [1. Login Page](#1-login-page)
+    - [2. Register Page](#2-register-page)
+    - [3. Logged In Home Page](#3-logged-in-home-page)
+    - [4. Products Page](#4-products-page)
+    - [5. Categorized Products Page](#5-categorized-products-page)
+    - [6. Owned Products Page](#6-owned-products-page)
+    - [7. Rented Products Page](#7-rented-products-page)
+    - [8. Create New Product Page](#8-create-new-product-page)
+    - [9. Create New Product Page Contd.](#9-create-new-product-page-contd)
+    - [10. Product Deletion Page](#10-product-deletion-page)
+    - [11. User Settings Page](#11-user-settings-page)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -321,6 +333,45 @@ mutation {
 ```
 
 For a full list of available queries and mutations, refer to the schema in GraphQL Playground.
+
+## Screenshots
+
+Here are some screenshots of the Teebay project in action:
+
+### 1. Login Page
+![Login Page](img/1.png)
+
+### 2. Register Page
+![Register Page](img/2.png)
+
+### 3. Logged In Home Page
+![Logged In Home Page](img/3.png)
+
+### 4. Products Page
+![Products Page](img/4.png)
+
+### 5. Categorized Products Page
+![Categorized Products Page](img/5.png)
+
+### 6. Owned Products Page
+![Owned Products Page](img/6.png)
+
+### 7. Rented Products Page
+![Rented Products Page](img/7.png)
+
+### 8. Create New Product Page
+![Create New Product Page](img/8.png)
+
+### 9. Create New Product Page Contd.
+![Create New Product Page Contd.](img/9.png)
+
+### 10. Product Deletion Page
+![Product Deletion Page](img/10.png)
+
+### 11. User Settings Page
+![User Settings Page](img/11.png)
+
+These screenshots provide a visual overview of the key features and interfaces of the Teebay project.
 
 ## Contributing
 
