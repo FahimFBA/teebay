@@ -83,6 +83,7 @@ Before you begin, ensure you have met the following requirements:
    These commands do the following:
    - `npx prisma generate`: Generates the Prisma client based on your schema
    - `npx prisma migrate dev`: Applies all pending migrations and creates a new one if there are schema changes
+  
    > [!IMPORTANT]  
    > Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
 
@@ -91,6 +92,7 @@ Before you begin, ensure you have met the following requirements:
    npx prisma db seed
    ```
 
+   >[!IMPORTANT]
    This step is crucial to populate your database with all the necessary data for development and testing.
 
 6. Start the backend server:
