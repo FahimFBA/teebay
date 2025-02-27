@@ -80,6 +80,8 @@ Before you begin, ensure you have met the following requirements:
    - `npx prisma generate`: Generates the Prisma client based on your schema
    - `npx prisma migrate dev`: Applies all pending migrations and creates a new one if there are schema changes
 
+   IMPORTANT: Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
+
    If you encounter any issues, try the following steps:
 
    a. Reset the database (this will delete all data):
@@ -97,6 +99,8 @@ Before you begin, ensure you have met the following requirements:
       ```
       npx prisma migrate dev
       ```
+
+   NOTE: If you encounter issues with product creation due to ID conflicts, ensure you've run all migrations, including the one that resets the Product table's auto-increment sequence.
 
 5. Seed the database with initial data:
    ```
