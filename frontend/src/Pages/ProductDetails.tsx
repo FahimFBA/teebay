@@ -80,8 +80,8 @@ export const ProductDetails = () => {
       });
 
       alert("Product deleted successfully!");
-      // Redirect to the products page/home page after deleting a product
-      window.location.href = "/products";
+      // Redirect to the profile page after deleting a product
+      window.location.href = "/profile";
     } catch (error) {
       console.error("Error deleting product:", error);
       alert("Failed to delete product. Please try again.");
