@@ -3,6 +3,7 @@ import { useQuery, useMutation } from "@apollo/client";
 import {
   GET_PRODUCT_DETAILS_QUERY,
   CHANGE_PRODUCT_OWNER_MUTATION,
+  DELETE_PRODUCT_MUTATION,
 } from "@/store";
 import dayjs from "dayjs";
 import advancedFormat from "dayjs/plugin/advancedFormat";
@@ -36,6 +37,7 @@ export const ProductDetails = () => {
   const { user } = useAuth();
 
   const [changeProductOwner] = useMutation(CHANGE_PRODUCT_OWNER_MUTATION);
+  const [deleteProduct] = useMutation(DELETE_PRODUCT_MUTATION);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -59,7 +61,7 @@ export const ProductDetails = () => {
         },
       });
 
-      // Refetch the product details to update the UI
+      // Refetch the product details to update the frontend
       await refetch();
 
       alert("Product purchased successfully!");
@@ -69,7 +71,22 @@ export const ProductDetails = () => {
     }
   };
 
-  console.log("product.owner.id", product.owner.id);
+  const handleDelete = async () => {
+    try {
+      await deleteProduct({
+        variables: {
+          id: parseInt(id || "0", 10),
+        },
+      });
+
+      alert("Product deleted successfully!");
+      // Redirect to the products page/home page after deleting a product
+      window.location.href = "/products";
+    } catch (error) {
+      console.error("Error deleting product:", error);
+      alert("Failed to delete product. Please try again.");
+    }
+  };
 
   return (
     <div className="container max-w-7xl mx-auto p-4">
@@ -94,27 +111,51 @@ export const ProductDetails = () => {
             <strong>Updated At:</strong>{" "}
             {formatDate(parseInt(product.updatedAt))}
           </p>
-          <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-            <AlertDialogTrigger asChild>
-              {user?.id !== product.owner.id && (
-                <Button className="mt-4">Purchase Product</Button>
-              )}
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  Are you sure that you want to purchase this product?
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handlePurchase}>
-                  Continue
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <div className="flex gap-4 mt-4">
+            <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+              <AlertDialogTrigger asChild>
+                {user?.id !== product.owner.id && (
+                  <Button>Purchase Product</Button>
+                )}
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure that you want to purchase this product?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handlePurchase}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            {user?.id === product.owner.id && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">Delete Product</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your product.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete}>
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-2">Owner Details</h2>

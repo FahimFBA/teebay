@@ -94,7 +94,7 @@ export const ProductCard = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const ownedByYou = user?.id === Number(product.owner?.id);
-  const isNotRented = product.rentedTo === 0;
+  const isNotRented = !product.rentedTo;
 
   console.log(
     "ownedByYou:",

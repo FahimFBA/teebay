@@ -10,6 +10,8 @@ Teebay is a full-stack web application for buying, selling, and renting products
   - [Tech Stack](#tech-stack)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Troubleshooting](#troubleshooting)
+    - [Product Creation Issues](#product-creation-issues)
   - [Database Schema](#database-schema)
   - [Usage](#usage)
   - [Current Status](#current-status)
@@ -70,15 +72,19 @@ Before you begin, ensure you have met the following requirements:
      DATABASE_URL="postgresql://username:password@localhost:5432/teebay_db"
      ```
 
-4. Set up the database and generate Prisma client:
+4. Set up the database, generate Prisma client, and apply migrations:
    ```
    npx prisma generate
-   npx prisma migrate dev --name init
+   npx prisma migrate dev
    ```
 
    These commands do the following:
    - `npx prisma generate`: Generates the Prisma client based on your schema
-   - `npx prisma migrate dev --name init`: Creates and applies a new migration based on your current schema
+   - `npx prisma migrate dev`: Applies all pending migrations and creates a new one if there are schema changes
+
+   IMPORTANT: Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
+
+   After running these commands, you should see a message indicating that all migrations have been applied successfully, including one named "reset_product_sequence". This migration is crucial for preventing ID conflicts when creating new products.
 
    If you encounter any issues, try the following steps:
 
@@ -95,15 +101,61 @@ Before you begin, ensure you have met the following requirements:
 
    c. Then run the migration command again:
       ```
-      npx prisma migrate dev --name init
+      npx prisma migrate dev
       ```
+
+   If you're still encountering issues after these steps, please refer to the Troubleshooting section below.
+
+## Troubleshooting
+
+### Product Creation Issues
+
+If you're experiencing problems creating new products, such as ID conflicts, follow these steps:
+
+1. Ensure you've run all migrations, especially the one that resets the Product table's auto-increment sequence:
+   ```
+   npx prisma migrate dev
+   ```
+
+2. If the issue persists, try applying the specific migration for resetting the Product sequence:
+   ```
+   npx prisma migrate resolve --applied "20250227_reset_product_sequence"
+   npx prisma migrate dev
+   ```
+
+3. If the problem still occurs, try resetting the database:
+   ```
+   npx prisma migrate reset
+   ```
+
+4. After resetting, run the migrations again:
+   ```
+   npx prisma migrate dev
+   ```
+
+5. If you're still encountering problems, check your database directly using Prisma Studio:
+   ```
+   npx prisma studio
+   ```
+   Look at the Product table and verify that the ID sequence is correct.
+
+6. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
 
 5. Seed the database with initial data:
    ```
    npx prisma db seed
    ```
 
+   This step is crucial to populate your database with all the necessary data for development and testing.
+
    If you encounter any issues with undefined DATABASE_URL, make sure your .env file is properly set up and the DATABASE_URL is correct.
+
+6. Verify the data using Prisma Studio:
+   ```
+   npx prisma studio
+   ```
+
+   This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`. Use it to confirm that all the data has been properly seeded.
 
 6. Start the backend server:
    ```

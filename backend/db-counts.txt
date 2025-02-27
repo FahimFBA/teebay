@@ -1,0 +1,2 @@
+Number of users in the database: 10
+Number of products in the database: 450
