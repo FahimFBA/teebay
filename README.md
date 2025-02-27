@@ -11,7 +11,9 @@ Teebay is a full-stack web application for buying, selling, and renting products
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Troubleshooting](#troubleshooting)
+    - [Database Setup Issues](#database-setup-issues)
     - [Product Creation Issues](#product-creation-issues)
+    - [Verifying Data](#verifying-data)
   - [Database Schema](#database-schema)
   - [Usage](#usage)
   - [Current Status](#current-status)
@@ -81,65 +83,8 @@ Before you begin, ensure you have met the following requirements:
    These commands do the following:
    - `npx prisma generate`: Generates the Prisma client based on your schema
    - `npx prisma migrate dev`: Applies all pending migrations and creates a new one if there are schema changes
-
-   IMPORTANT: Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
-
-   After running these commands, you should see a message indicating that all migrations have been applied successfully, including one named "reset_product_sequence". This migration is crucial for preventing ID conflicts when creating new products.
-
-   If you encounter any issues, try the following steps:
-
-   a. Reset the database (this will delete all data):
-      ```
-      npx prisma migrate reset
-      ```
-
-   b. If the reset doesn't work, manually delete the `prisma/migrations` folder:
-      ```
-      rm -rf prisma/migrations
-      ```
-      (On Windows, use `rmdir /s /q prisma\migrations`)
-
-   c. Then run the migration command again:
-      ```
-      npx prisma migrate dev
-      ```
-
-   If you're still encountering issues after these steps, please refer to the Troubleshooting section below.
-
-## Troubleshooting
-
-### Product Creation Issues
-
-If you're experiencing problems creating new products, such as ID conflicts, follow these steps:
-
-1. Ensure you've run all migrations, especially the one that resets the Product table's auto-increment sequence:
-   ```
-   npx prisma migrate dev
-   ```
-
-2. If the issue persists, try applying the specific migration for resetting the Product sequence:
-   ```
-   npx prisma migrate resolve --applied "20250227_reset_product_sequence"
-   npx prisma migrate dev
-   ```
-
-3. If the problem still occurs, try resetting the database:
-   ```
-   npx prisma migrate reset
-   ```
-
-4. After resetting, run the migrations again:
-   ```
-   npx prisma migrate dev
-   ```
-
-5. If you're still encountering problems, check your database directly using Prisma Studio:
-   ```
-   npx prisma studio
-   ```
-   Look at the Product table and verify that the ID sequence is correct.
-
-6. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
+   > [!IMPORTANT]  
+   > Always run these commands after pulling new changes or when switching branches to ensure your database schema is up-to-date.
 
 5. Seed the database with initial data:
    ```
@@ -147,15 +92,6 @@ If you're experiencing problems creating new products, such as ID conflicts, fol
    ```
 
    This step is crucial to populate your database with all the necessary data for development and testing.
-
-   If you encounter any issues with undefined DATABASE_URL, make sure your .env file is properly set up and the DATABASE_URL is correct.
-
-6. Verify the data using Prisma Studio:
-   ```
-   npx prisma studio
-   ```
-
-   This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`. Use it to confirm that all the data has been properly seeded.
 
 6. Start the backend server:
    ```
@@ -175,12 +111,69 @@ If you're experiencing problems creating new products, such as ID conflicts, fol
 
 9. Access the application in your web browser at `http://localhost:5173` (or the port specified by Vite).
 
-10. (Optional) To view and manage your database using Prisma Studio:
-    ```
-    cd backend
-    npx prisma studio
-    ```
-    This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`.
+> [!NOTE]
+> Note: If you encounter any issues during the installation process, particularly with database setup or product creation, please refer to the Troubleshooting section below.
+
+## Troubleshooting
+
+### Database Setup Issues
+
+If you encounter issues during database setup or migration:
+
+1. Ensure your PostgreSQL server is running and the DATABASE_URL in your .env file is correct.
+
+2. If migrations fail, try resetting the database (this will delete all data):
+   ```
+   npx prisma migrate reset
+   ```
+
+3. If the reset doesn't work, manually delete the `prisma/migrations` folder:
+   ```
+   rm -rf prisma/migrations
+   ```
+   (On Windows, use `rmdir /s /q prisma\migrations`)
+
+4. Then run the migration command again:
+   ```
+   npx prisma migrate dev
+   ```
+
+### Product Creation Issues
+
+If you're experiencing problems creating new products, such as ID conflicts:
+
+1. Ensure you've run all migrations, especially the one that resets the Product table's auto-increment sequence:
+   ```
+   npx prisma migrate dev
+   ```
+
+2. If the issue persists, try applying the specific migration for resetting the Product sequence:
+   ```
+   npx prisma migrate resolve --applied "20250227_reset_product_sequence"
+   npx prisma migrate dev
+   ```
+
+3. If problems continue, check your database using Prisma Studio:
+   ```
+   npx prisma studio
+   ```
+   Verify that the Product table's ID sequence is correct.
+
+4. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
+
+### Verifying Data
+
+To confirm that all data has been properly seeded and the database is set up correctly:
+
+1. Use Prisma Studio to view and manage your database:
+   ```
+   npx prisma studio
+   ```
+   This will open Prisma Studio in your default web browser, typically at `http://localhost:5555`.
+
+2. Check the User and Product tables to ensure they contain the expected data.
+
+If you encounter any unexpected issues not covered here, please refer to the project's issue tracker on GitHub or seek assistance from the project maintainers.
 
 ## Database Schema
 
@@ -248,9 +241,6 @@ For testing purposes, you can use the following test user credentials:
 - ID: 3
 - Email: newuser2@example.com
 - Password: newPassword1234
-- Name: Md. Fahim Bin Amin
-- Total rented products: 32
-- Total owned products: 48
 
 Please note that this information is for development and testing purposes only. Do not use these credentials in a production environment.
 

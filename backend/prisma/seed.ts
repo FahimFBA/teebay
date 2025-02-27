@@ -98,7 +98,7 @@ async function main() {
 
     // Product upsert
     const products = [];
-    const categories = ['ELECTRONICS', 'HOMEAPPLIANCES', 'FURNITURE', 'SPORTING_GOODS', 'OUTDOOR'];
+    const categories = ['ELECTRONICS', 'FURNITURE', 'HOMEAPPLIANCES', 'SPORTING GOODS', 'OUTDOOR', 'TOYS'];
     
     for (let i = 1; i <= 450; i++) {
       const product = {
@@ -133,6 +133,11 @@ async function main() {
 
     const productCount = await prisma.product.count();
     console.log(`Number of products in the database: ${productCount}`);
+
+    // Update sequences
+    await prisma.$executeRaw`SELECT setval('"User_id_seq"', (SELECT MAX(id) from "User"));`
+    await prisma.$executeRaw`SELECT setval('"Product_id_seq"', (SELECT MAX(id) from "Product"));`
+    console.log('Sequences updated successfully');
 
   } catch (error) {
     console.error('Error seeding data:', error)
