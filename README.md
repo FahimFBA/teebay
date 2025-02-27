@@ -15,6 +15,7 @@ Teebay is a full-stack web application for buying, selling, and renting products
     - [Product Creation Issues](#product-creation-issues)
     - [Verifying Data](#verifying-data)
   - [Database Schema](#database-schema)
+  - [Prisma Schema](#prisma-schema)
   - [Usage](#usage)
   - [Current Status](#current-status)
     - [Product](#product)
@@ -185,8 +186,8 @@ erDiagram
     User {
         int id PK
         string email
-        string password
         string name
+        string password
         datetime createdAt
         datetime updatedAt
     }
@@ -194,15 +195,52 @@ erDiagram
         int id PK
         int ownerId FK
         string name
-        string category
         float price
         float rent
-        int rentedTo FK
+        int rentedTo
         datetime createdAt
         datetime updatedAt
+        string category
+        string productDescription
     }
     User ||--o{ Product : owns
-    User ||--o{ Product : rents
+```
+
+## Prisma Schema
+
+```prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  password  String
+  products  Product[]
+}
+
+model Product {
+  id                 Int      @id @default(autoincrement())
+  ownerId            Int
+  name               String
+  price              Float
+  rent               Float?
+  rentedTo           Int?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  category           String
+  productDescription String?
+  owner              User     @relation(fields: [ownerId], references: [id])
+}
 ```
 
 ## Usage
