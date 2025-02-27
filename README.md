@@ -373,7 +373,7 @@ Here are some screenshots of the Teebay project in action:
 ![User Settings Page](img/11.png)
 
 ### 12. Buy A Product
-![Buy A Product](https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f)
+[https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f](https://github.com/user-attachments/assets/1adde507-555e-450a-a4a4-88a2f317cc1f)
 
 These screenshots provide a visual overview of the key features and interfaces of the Teebay project.
 
