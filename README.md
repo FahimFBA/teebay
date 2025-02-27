@@ -10,6 +10,8 @@ Teebay is a full-stack web application for buying, selling, and renting products
   - [Tech Stack](#tech-stack)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
+  - [Troubleshooting](#troubleshooting)
+    - [Product Creation Issues](#product-creation-issues)
   - [Database Schema](#database-schema)
   - [Usage](#usage)
   - [Current Status](#current-status)
@@ -115,23 +117,29 @@ If you're experiencing problems creating new products, such as ID conflicts, fol
    npx prisma migrate dev
    ```
 
-2. If the issue persists, try resetting the database:
+2. If the issue persists, try applying the specific migration for resetting the Product sequence:
+   ```
+   npx prisma migrate resolve --applied "20250227_reset_product_sequence"
+   npx prisma migrate dev
+   ```
+
+3. If the problem still occurs, try resetting the database:
    ```
    npx prisma migrate reset
    ```
 
-3. After resetting, run the migrations again:
+4. After resetting, run the migrations again:
    ```
    npx prisma migrate dev
    ```
 
-4. If you're still encountering problems, check your database directly using Prisma Studio:
+5. If you're still encountering problems, check your database directly using Prisma Studio:
    ```
    npx prisma studio
    ```
    Look at the Product table and verify that the ID sequence is correct.
 
-5. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
+6. If none of the above steps resolve the issue, please open an issue on the GitHub repository with details about the error you're encountering.
 
 5. Seed the database with initial data:
    ```
