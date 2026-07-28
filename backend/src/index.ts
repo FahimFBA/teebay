@@ -31,6 +31,19 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 
+// Mitigation for GHSA-9q82-xgwf-vj6h: apollo-server-core (v3, EOL, no patch
+// available) is vulnerable to a CSRF/XS-Search bypass triggered by GET
+// requests carrying a non-JSON `message/*` Content-Type. Reject them before
+// they reach Apollo's middleware.
+app.use((req, res, next) => {
+  const contentType = req.headers['content-type'];
+  if (contentType && contentType.toLowerCase().includes('message/')) {
+    res.status(415).json({ error: 'Content-Type not allowed' });
+    return;
+  }
+  next();
+});
+
 async function startApolloServer() {
   try {
     const server = new ApolloServer({
