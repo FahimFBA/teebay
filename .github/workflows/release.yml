@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - CHANGELOG.md
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Extract latest version and notes from CHANGELOG.md
+        id: changelog
+        run: |
+          set -euo pipefail
+
+          VERSION=$(grep -m1 -oP '(?<=^## \[)[^\]]+' CHANGELOG.md || true)
+          if [ -z "$VERSION" ]; then
+            echo "::error::No '## [x.y.z]' version header found in CHANGELOG.md"
+            exit 1
+          fi
+
+          NOTES=$(awk '/^## \[/{ if (found) exit; found=1; next } found' CHANGELOG.md)
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          {
+            echo "notes<<CHANGELOG_EOF"
+            echo "$NOTES"
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Check whether tag already exists
+        id: check_tag
+        run: |
+          set -euo pipefail
+          TAG="v${{ steps.changelog.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1 || git ls-remote --tags origin "refs/tags/$TAG" | grep -q .; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.changelog.outputs.version }}
+          name: v${{ steps.changelog.outputs.version }}
+          body: ${{ steps.changelog.outputs.notes }}
+          target_commitish: ${{ github.sha }}
