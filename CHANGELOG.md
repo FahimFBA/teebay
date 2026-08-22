@@ -5,6 +5,31 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-08-22
+
+### Security
+
+- **backend**: bumped `brace-expansion` (transitive, via `nodemon`'s `glob`
+  chain) to 5.0.9, resolving [GHSA-rgw5-rvv9-x895](https://github.com/advisories/GHSA-rgw5-rvv9-x895)
+  (DoS via unbounded intermediate arrays, bypassing the earlier
+  CVE-2026-14257 mitigation).
+- **frontend**: bumped `react-router`/`react-router-dom` 7.18.1 → 7.18.2,
+  resolving [GHSA-qwww-vcr4-c8h2](https://github.com/advisories/GHSA-qwww-vcr4-c8h2)
+  (RSC-mode CSRF bypass) — previously tracked as an accepted risk in 1.1.0,
+  now fully patched.
+- **frontend**: bumped `brace-expansion` to 5.0.9 (see above),
+  `js-yaml` to 4.3.1 (quadratic-CPU `!!omap` DoS,
+  [GHSA-5p4m-2wfm-xmqj](https://github.com/advisories/GHSA-5p4m-2wfm-xmqj)),
+  and `nanoid` to 3.3.18 (infinite loop on zero-size custom generators,
+  [GHSA-2v37-7h3g-55p8](https://github.com/advisories/GHSA-2v37-7h3g-55p8)).
+
+### Known accepted risk
+
+- `apollo-server-core`/`apollo-server-express` v3 still has no available
+  patch for [GHSA-9q82-xgwf-vj6h](https://github.com/advisories/GHSA-9q82-xgwf-vj6h);
+  the request-level mitigation added in 1.1.0 remains in place. Tracked for
+  a future `@apollo/server` migration.
+
 ## [1.1.0] - 2026-07-28
 
 ### Security
