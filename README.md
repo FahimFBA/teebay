@@ -1,5 +1,7 @@
 # Teebay Project
 
+> **⚠️ This project is archived and no longer maintained.** The repository is read-only. No further updates, bug fixes, or security patches are planned. Feel free to fork it if you want to continue development.
+
 Teebay is a full-stack web application for buying, selling, and renting products. This project uses a React frontend with a Node.js backend, GraphQL API, and PostgreSQL database.
 
 ## Table of Contents
